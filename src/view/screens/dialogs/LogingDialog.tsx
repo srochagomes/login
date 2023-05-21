@@ -15,6 +15,7 @@ import { AccountCircle, Facebook, Google, LinkedIn } from '@mui/icons-material';
 import theme from '@/view/themes/PrincipalTheme';
 import { FocusTrap } from '@mui/base';
 import Link from '@/view/components/catalogs/links/Link';
+import accessRequired from '@/domain/auth/AccessRequire';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -72,8 +73,7 @@ export default function LoginDialog(props:Props) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   
-  const [open, setOpen] = React.useState(openWindow);
-  console.log('LoginDialog valor=' + openWindow);
+  const [open, setOpen] = React.useState(openWindow);  
   
   React.useEffect(() => {
     setOpen(openWindow);
@@ -92,6 +92,13 @@ export default function LoginDialog(props:Props) {
     // TODO: Implement login logic with email and password
     console.log('Email:', email);
     console.log('Password:', password);
+
+    let user : IUserAuth = {
+      username: email,
+      password
+    }
+
+    accessRequired(user);
     handleClose();
   };
 
