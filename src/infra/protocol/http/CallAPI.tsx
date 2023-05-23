@@ -24,11 +24,7 @@ const callAPI = (baseURL: string, tokenService : ITokenAccess | null = null ) =>
       
       }
 
-
       return http;
-
-    
-
 }
 
 export default callAPI;

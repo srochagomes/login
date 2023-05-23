@@ -3,7 +3,7 @@ import callAPI from "@/infra/protocol/http/CallAPI";
 
 const API_AUTH_SERVER = 'api/auth';
 
-const identity = {
+const identityAPI = {
 
     getToken : async (user: IUserAuth) => {
         let baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -21,4 +21,4 @@ const identity = {
     
 }
 
-export default identity;
+export default identityAPI;

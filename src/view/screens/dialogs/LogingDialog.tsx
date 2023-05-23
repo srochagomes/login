@@ -15,7 +15,7 @@ import { AccountCircle, Facebook, Google, LinkedIn } from '@mui/icons-material';
 import theme from '@/view/themes/PrincipalTheme';
 import { FocusTrap } from '@mui/base';
 import Link from '@/view/components/catalogs/links/Link';
-import accessRequired from '@/domain/auth/AccessRequire';
+import accessRequired from '@/domain/auth/AccessRequireService';
 
 
 const useStyles = makeStyles((theme) => ({

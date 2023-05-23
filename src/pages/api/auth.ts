@@ -1,5 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import accessManager from '@/infra/api/auth/AccessManager';
+import { GetServerSidePropsContext } from 'next';
+import accessManagerAPI from '@/infra/api/auth/AccessManagerAPI';
+
+import refreshTokenRepository from '@/infra/repository/cookies/RefreshTokenRepository';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 type Data = {
@@ -9,6 +12,7 @@ type Data = {
 
 const controllers = {
   async login(req: NextApiRequest, res: NextApiResponse<ICredentialData | IErrorMessage>) {
+    
     console.log('method Login');
     let client_id = process.env.APP_CLIENT_ID;
     let client_secret = process.env.APP_CLIENT_SECRET;
@@ -22,9 +26,12 @@ const controllers = {
       scope: "roles email openid"  
     }
 
-    let apiReturn : IAPIReturn = await accessManager.getCredentialAccess(credential);
+    let apiReturn : IAPIReturn = await accessManagerAPI.getCredentialAccess(credential);
 
-    console.log('data:', apiReturn);
+    console.log('Refresh token API :', apiReturn.data.refresh_token );
+    
+    console.log('RefreshToken decriptografada :', refreshTokenRepository.get( req));
+    refreshTokenRepository.save(apiReturn.data.refresh_token, res);
 
 
     return res.status(apiReturn.status).json({
@@ -45,7 +52,8 @@ const controllerBy = {
 //request entry
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse, 
+  ctx: GetServerSidePropsContext
 ) {
   
   console.log('Servidor recebendo informação');

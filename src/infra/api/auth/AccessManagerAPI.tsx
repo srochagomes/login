@@ -1,7 +1,9 @@
 import callAPI, { headerJson } from "@/infra/protocol/http/CallAPI";
 
+import nookies from "nookies"
 
-const accessManager = {
+
+const accessManagerAPI = {
     
     async getCredentialAccess(credential : ICredentialAuth): Promise<IAPIReturn> {
 
@@ -15,8 +17,7 @@ const accessManager = {
         let api = callAPI(`${baseURL}`);       
         
         return await api.post<IAPIReturn>(apiAddress, credential, headerJson)
-        .then((response) => {
-            console.log('payload:', response.data);            
+        .then((response) => {          
                  
             let dataReturn: IAPIReturn =  {
                 status:  response.status,
@@ -39,4 +40,4 @@ const accessManager = {
 
 }
 
-export default accessManager;
+export default accessManagerAPI;
