@@ -5,16 +5,17 @@ import { parseCookies, setCookie } from 'nookies';
 
 const refreshTokenRepository = {
 
-    save(newRefreshToken: string, res: NextApiResponse) {    
-        let refresh_token_id = process.env.REFRESH_TOKEN_NAME;
-        let key_cript = process.env.KEY_CRIPTO;
-
+    save(refresh_token_id: string, newRefreshToken: string, res: NextApiResponse) {    
+        
         if (!refresh_token_id){
-            throw new Error('Refresh token id not found');
+            throw new Error('Refresh token should be informed.');
         }
 
+        let key_cript = process.env.KEY_CRIPTO;
+
+
         if (!key_cript){
-            throw new Error('Key not found');
+            throw new Error('Key not configured.');
         }
         
         setCookie({res}, refresh_token_id, encryptData( newRefreshToken, key_cript), {
@@ -26,10 +27,8 @@ const refreshTokenRepository = {
     
     },
 
-    get(req: NextApiRequest){
+    get(refresh_token_id:string, req: NextApiRequest){
 
-        let refresh_token_id = process.env.REFRESH_TOKEN_NAME;
-        
         if (!refresh_token_id){
             throw new Error('Refresh token id not found');
         }

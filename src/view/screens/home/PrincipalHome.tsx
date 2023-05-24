@@ -3,11 +3,15 @@ import Grid from '@mui/material/Grid'; // Grid version 2
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
+import accessRequired from '@/domain/auth/AccessRequireService';
+
 
 
 const inter = Inter({ subsets: ['latin'] })
 
+
 export default function PrincipalHome() {
+    accessRequired();
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         ...theme.typography.body2,

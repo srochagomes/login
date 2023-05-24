@@ -1,9 +1,9 @@
 import callAPI, { headerJson } from "@/infra/protocol/http/CallAPI";
 
-import nookies from "nookies"
 
 
-const accessManagerAPI = {
+
+const accessManager = {
     
     async getCredentialAccess(credential : ICredentialAuth): Promise<IAPIReturn> {
 
@@ -29,9 +29,9 @@ const accessManagerAPI = {
           .catch((error) => {
             console.error('Erro ao fazer a solicitação:', error);
             return {
-                status: error.status,
-                statusText: error.statusText,
-                data: error.data
+                status: error.response.status,
+                statusText: error.response.statusText,
+                data: error.response.data                
             }
           });       
           
@@ -40,4 +40,4 @@ const accessManagerAPI = {
 
 }
 
-export default accessManagerAPI;
+export default accessManager;

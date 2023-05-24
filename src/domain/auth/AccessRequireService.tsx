@@ -1,8 +1,13 @@
-import identityAPI from "@/infra/api/server/IdentityAPI"
+import identity from "@/infra/api/server/Identity"
 
-export default function accessRequired(user: IUserAuth) {
-        console.log('Requisitando acesso')
-        identityAPI.getToken(user);
-        console.log('acesso aplicada')  
+export default function accessRequired(user?: IUserAuth | undefined) {
+        if (user){
+          return identity.getTokenUser(user);
+        }else{
+          return identity.getTokenApp();   
+        }
+
+        
+        
 
 }

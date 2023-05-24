@@ -16,6 +16,7 @@ import theme from '@/view/themes/PrincipalTheme';
 import { FocusTrap } from '@mui/base';
 import Link from '@/view/components/catalogs/links/Link';
 import accessRequired from '@/domain/auth/AccessRequireService';
+import { encryptData } from '@/util/CryptoValue';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -89,13 +90,17 @@ export default function LoginDialog(props:Props) {
   };
 
   const handleLogin = () => {
-    // TODO: Implement login logic with email and password
-    console.log('Email:', email);
-    console.log('Password:', password);
+    
+    let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
+
+    if(!data){
+      throw new Error('Key encript should be informed.');
+    }
+
 
     let user : IUserAuth = {
       username: email,
-      password
+      password: encryptData(password, data)
     }
 
     accessRequired(user);

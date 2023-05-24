@@ -34,7 +34,7 @@ function HideOnScroll(props: Props) {
   );
 }
 
-export default function PrincipalAppBar(props: Props) {
+export default function PrincipalAppBar() {
   const [openLoginDialog, setOpenLoginDialog] = React.useState(false);
 
   const handleOpen = () => {
@@ -48,7 +48,7 @@ export default function PrincipalAppBar(props: Props) {
 
   return (
     <>     
-      <HideOnScroll {...props}>
+      <HideOnScroll >
       <AppBar>
         <Toolbar>
           <IconButton

@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 
-const callAPI = (baseURL: string, tokenService : ITokenAccess | null = null ) => {
+const callAPI = (baseURL: string) => {
 
     const http = axios.create({
         baseURL: `${baseURL}`,
@@ -10,19 +10,19 @@ const callAPI = (baseURL: string, tokenService : ITokenAccess | null = null ) =>
         // Outras configurações do Axios (opcional)
       });
 
-      if (tokenService?.hasToken()){
-          http.interceptors.request.use(function (config) {
-            // Do something before request is sent
-            config.headers.Authorization = `Bearer ${tokenService.get()}`
+      // if (tokenService?.hasToken()){
+      //     http.interceptors.request.use(function (config) {
+      //       // Do something before request is sent
+      //       config.headers.Authorization = `Bearer ${tokenService.get()}`
             
-            return config;
-          }, function (error) {
-            // Do something with request error
-            console.log('Erro no interceptor do axios')
-            return Promise.reject(error);
-          });
+      //       return config;
+      //     }, function (error) {
+      //       // Do something with request error
+      //       console.log('Erro no interceptor do axios')
+      //       return Promise.reject(error);
+      //     });
       
-      }
+      // }
 
       return http;
 }
