@@ -12,18 +12,25 @@ const identity = {
         let api = callAPI(`${baseURL}`);
         let access_token_id = process.env.NEXT_PUBLIC_ACCESS_TOKEN_USER;      
 
-        await api.post(USER_API_AUTH_SERVER, user, headerJson)
+        let response =  await api.post(USER_API_AUTH_SERVER, user, headerJson)
         .then(response => {                        
             
             if (!access_token_id){
               throw new Error('Access token id not found');
             }
             accessTokenRepository.save(access_token_id, response.data.access_token);
+
+            return { status: response.status , 
+                     ...response.data}
           })
           .catch(error => {
             console.error('Erro ao fazer a solicitação:', error);
+            return {
+              status: error.response.status , 
+              ...error.response.data}
           });
    
+          return response; 
     },
 
     getTokenApp : async () => {
@@ -31,7 +38,7 @@ const identity = {
       let api = callAPI(`${baseURL}`);
       let access_token_id = process.env.NEXT_PUBLIC_ACCESS_TOKEN_APP;      
 
-      await api.post(APP_API_AUTH_SERVER, null, headerJson)
+      let response =  await api.post(APP_API_AUTH_SERVER, null, headerJson)
       .then(response => {
           
           if (!access_token_id){
@@ -39,11 +46,17 @@ const identity = {
           }
 
           accessTokenRepository.save(access_token_id, response.data.access_token);
+          return { status: response.status , 
+            ...response.data}
         })
         .catch(error => {
           console.error('Erro ao fazer a solicitação:', error);
+          return {
+            status: error.response.status , 
+            ...error.response.data}
         });
- 
+        
+        return response; 
   }
     
 }

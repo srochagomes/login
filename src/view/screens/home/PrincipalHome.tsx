@@ -11,7 +11,13 @@ const inter = Inter({ subsets: ['latin'] })
 
 
 export default function PrincipalHome() {
-    accessRequired();
+    let payload = accessRequired().then((obj)=>{
+      console.log("payload dentro :",obj);
+    });
+
+    console.log("payload fora:",payload);
+    
+
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         ...theme.typography.body2,

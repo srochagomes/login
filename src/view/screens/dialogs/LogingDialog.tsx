@@ -5,7 +5,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Grig from '@mui/material/Grid';
-
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Grid, makeStyles } from '@material-ui/core';
@@ -73,6 +74,7 @@ export default function LoginDialog(props:Props) {
   const classes = useStyles();  
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [messageLogin, setMessageLogin] = React.useState('');
   
   const [open, setOpen] = React.useState(openWindow);  
   
@@ -83,16 +85,17 @@ export default function LoginDialog(props:Props) {
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
+    setMessageLogin('');
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
+    setMessageLogin('');
   };
 
-  const handleLogin = () => {
+  const handleLogin = () => {    
     
     let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
-
     if(!data){
       throw new Error('Key encript should be informed.');
     }
@@ -103,8 +106,20 @@ export default function LoginDialog(props:Props) {
       password: encryptData(password, data)
     }
 
-    accessRequired(user);
-    handleClose();
+    accessRequired(user)
+          .then((body)=>{
+            console.log('Corpo:',body);
+            if (body.status !== 200){
+               if (body.status == 401) 
+                setMessageLogin('Usuário e/ou senha invalido!');
+               else
+                setMessageLogin(body.description);
+            }else{
+              handleClose();
+            }
+          });    
+    
+    
   };
 
   const handleLoginSocial = (provider:string) => {
@@ -194,6 +209,10 @@ export default function LoginDialog(props:Props) {
           
         </DialogContent>
         <DialogActions>
+        
+          
+          {messageLogin && (
+          <Alert    severity="error" color="error" sx={{ width: '100%', textAlign: 'left' }} >{messageLogin}</Alert>)}
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
