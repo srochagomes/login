@@ -5,6 +5,7 @@ import accessManagerAPI from '@/infra/api/auth/AccessManager';
 import refreshTokenRepository from '@/infra/repository/cookies/RefreshTokenRepository';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import accessTokenRepository from '@/infra/repository/cookies/AccessTokenRepository';
+import refreshTokenStoreService from '@/domain/auth/RefreshTokenStoreService';
 
 type Data = {
   name: string
@@ -31,17 +32,9 @@ const controllers = {
     }
 
     let apiReturn : IAPIReturn = await accessManagerAPI.getCredentialAccess(credential);
-
-    
-    let refresh_token_id = process.env.REFRESH_TOKEN_APP;
-
-    if (!refresh_token_id){
-      throw new Error('Refresh token id not configured.');
-    }
     
     if (apiReturn?.data?.refresh_token){
-      refreshTokenRepository.save(refresh_token_id, apiReturn.data.refresh_token, res);
-    
+      refreshTokenStoreService.toApp(apiReturn.data.refresh_token, res);
       //remover o refreshtoken por segurança
       delete apiReturn.data.refresh_token;
     }
