@@ -1,5 +1,5 @@
 import refreshTokenRepository from "@/infra/repository/cookies/RefreshTokenRepository";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const refreshTokenStoreService ={
     toUser(refreshToken:string, res: NextApiResponse<ICredentialData | IErrorMessage>): void {
@@ -19,9 +19,16 @@ const refreshTokenStoreService ={
         }
 
         refreshTokenRepository.save(refresh_token_id, refreshToken, res);
+    },
+    logoutUser(res: NextApiResponse<ICredentialData | IErrorMessage>): void {
+        let refresh_token_id = process.env.REFRESH_TOKEN_USER;
+
+        if (!refresh_token_id){
+            throw new Error('Refresh token id not found');        }
+
+        refreshTokenRepository.remove(refresh_token_id,res);
+        
     }
-    
-    
 
 }
 

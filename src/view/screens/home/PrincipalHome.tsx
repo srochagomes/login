@@ -3,21 +3,27 @@ import Grid from '@mui/material/Grid'; // Grid version 2
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
-import accessRequired from '@/domain/auth/AccessRequireService';
-
-
-
+import { useSelector, useDispatch } from 'react-redux';
+import applicationSession from '@/domain/session/ApplicationSession';
+import { useState, useEffect } from 'react';
+import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 const inter = Inter({ subsets: ['latin'] })
 
 
 export default function PrincipalHome() {
-    let payload = accessRequired().then((obj)=>{
-      console.log("payload dentro :",obj);
+    const userLogged = useSelector((state:any) => state.userLoggedState);
+    
+    const dispatch = useDispatch();
+    useEffect(() => {
+      dispatch(verifyUserLogged());
+    }, [])
+
+
+    applicationSession.register().then((obj)=>{
+      console.log("Aplicação registrada");
     });
 
-    console.log("payload fora:",payload);
     
-
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         ...theme.typography.body2,

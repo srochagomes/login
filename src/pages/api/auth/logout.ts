@@ -7,6 +7,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import accessTokenRepository from '@/infra/repository/cookies/AccessTokenRepository';
 import { decryptData } from '@/util/CryptoValue';
 import refreshTokenStoreService from '@/domain/auth/RefreshTokenStoreService';
+import { HttpStatusCode } from 'axios';
 
 type Data = {
   name: string
@@ -14,38 +15,13 @@ type Data = {
 
 
 const controllers = {
-  async login(req: NextApiRequest, res: NextApiResponse<ICredentialData | IErrorMessage>) {
+  async logout(req: NextApiRequest, res: NextApiResponse<ICredentialData | IErrorMessage>) {
     
+    refreshTokenStoreService.logoutUser(res);          
 
-    let client_id = process.env.APP_CLIENT_ID;
-    let client_secret = process.env.APP_CLIENT_SECRET;
-    
-    let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
-
-    if(!data){
-      throw new Error('Key encript should be informed.');
-    }
-
-    let credential = {
-      client_id,
-      client_secret,
-      ...req.body,
-      grant_type: "password",
-      scope: "roles email openid acr"  
-    }
-
-    credential.password = decryptData(credential.password, data);
-
-    let apiReturn : IAPIReturn = await accessManagerAPI.getCredentialAccess(credential);
-    
-    if (apiReturn?.data?.refresh_token){
-      refreshTokenStoreService.toUser(apiReturn.data.refresh_token, res);          
-      delete apiReturn.data.refresh_token;
-    }
-    
-    
-    return res.status(apiReturn.status).json({
-      ...apiReturn.data,
+     return res.status(HttpStatusCode.Ok).json({
+      status: 200,
+      message: 'deleted'
     });
   }
   
@@ -53,7 +29,7 @@ const controllers = {
 
 
 const controllerBy = {
-  POST: controllers.login,
+  DELETE: controllers.logout,
   OPTIONS: (_: NextApiRequest, res: NextApiResponse) => res.send('OK'),
 }
 
@@ -66,7 +42,7 @@ export default function handler(
   ctx: GetServerSidePropsContext
 ) {
   
-
+  
   let method = req?.method?.toUpperCase();
   let keyObject = method as keyof typeof controllerBy;
   

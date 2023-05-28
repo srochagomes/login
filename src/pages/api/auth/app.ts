@@ -28,7 +28,7 @@ const controllers = {
       client_id,
       client_secret,      
       grant_type: "client_credentials",
-      scope: "roles email openid"  
+      scope: "roles email openid acr offline_access"  
     }
 
     let apiReturn : IAPIReturn = await accessManagerAPI.getCredentialAccess(credential);
@@ -62,7 +62,7 @@ export default function handler(
   ctx: GetServerSidePropsContext
 ) {
   
-  console.log('Servidor recebendo informação');
+
   let method = req?.method?.toUpperCase();
   let keyObject = method as keyof typeof controllerBy;
   

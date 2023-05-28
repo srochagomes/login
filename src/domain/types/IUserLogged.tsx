@@ -10,5 +10,6 @@ interface IUserLogged{
     iat?: number | undefined,
     jti?: string | undefined,
     preferred_username?: string | undefined,
-    session_state?: string | undefined
+    session_state?: string | undefined,
+    logged?: boolean
 }

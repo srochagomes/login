@@ -1,0 +1,3 @@
+interface IDialogWindow{
+    open: boolean
+}

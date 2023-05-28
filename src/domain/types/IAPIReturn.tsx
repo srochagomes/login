@@ -1,6 +1,6 @@
 interface IAPIReturn {
-    status: any,    
-    data: any,
-    statusText: any
+    status?: any,    
+    data?: any,
+    statusText?: any
     
 }

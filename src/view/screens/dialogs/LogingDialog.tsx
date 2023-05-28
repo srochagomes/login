@@ -16,8 +16,15 @@ import { AccountCircle, Facebook, Google, LinkedIn } from '@mui/icons-material';
 import theme from '@/view/themes/PrincipalTheme';
 import { FocusTrap } from '@mui/base';
 import Link from '@/view/components/catalogs/links/Link';
-import accessRequired from '@/domain/auth/AccessRequireService';
+
 import { encryptData } from '@/util/CryptoValue';
+import { useSelector, useDispatch } from 'react-redux';
+import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
+
+import { closeDialogLogin} from '@/store/reducers/dialogs/LoginState';
+
+import userSession from '@/domain/session/UserSession';
+import { HttpStatusCode } from 'axios';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -69,6 +76,10 @@ interface Props{
 }
 
 export default function LoginDialog(props:Props) {
+  const userLogged = useSelector((state:any) => state.userLoggedState);
+  const loginDialog = useSelector((state:any) => state.loginDialogState);
+  const dispatch = useDispatch();
+  
   const {openWindow, oncloseWindow} = props;
   
   const classes = useStyles();  
@@ -77,10 +88,17 @@ export default function LoginDialog(props:Props) {
   const [messageLogin, setMessageLogin] = React.useState('');
   
   const [open, setOpen] = React.useState(openWindow);  
+
+  const clearData = () => {
+    setEmail('');
+    setPassword('')
+    setMessageLogin('');
+  };
   
   React.useEffect(() => {
-    setOpen(openWindow);
-  }, [openWindow]);
+    setOpen(loginDialog.open);
+    clearData();    
+  }, [loginDialog.open]);
 
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,32 +124,33 @@ export default function LoginDialog(props:Props) {
       password: encryptData(password, data)
     }
 
-    accessRequired(user)
-          .then((body)=>{
-            console.log('Corpo:',body);
-            if (body.status !== 200){
-               if (body.status == 401) 
+    userSession.register(user)
+          .then((body)=>{            
+            if (body.status !== HttpStatusCode.Ok){
+               if (body.status == HttpStatusCode.Unauthorized) 
                 setMessageLogin('Usuário e/ou senha invalido!');
-               else
-                setMessageLogin(body.description);
-            }else{
+               else if (body.status == HttpStatusCode.Forbidden) 
+                setMessageLogin('Usuário não pode acessar!');
+               else 
+                setMessageLogin(body?.data?.description);
+            }else{             
+              dispatch(verifyUserLogged());
               handleClose();
             }
           });    
     
-    
+      
   };
 
   const handleLoginSocial = (provider:string) => {
     // TODO: Implement login logic with social provider
-    console.log('Login with', provider);
+
     handleClose();
   };
 
   
-  const handleClose = () => {
-    setOpen(false);
-    oncloseWindow();
+  const handleClose = () => {    
+    dispatch(closeDialogLogin());
   };
 
   return (

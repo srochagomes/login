@@ -10,12 +10,14 @@ const loggedRepository = {
         if (jsonData){
             const data: IUserLogged = JSON.parse(jsonData);
             return data;                
-        }
-    
+        }    
 
         return null;
         
-    }
+    },
+    remove(key:string){
+        globalThis?.sessionStorage?.removeItem(key);
+    },
 }
 
 export default loggedRepository;

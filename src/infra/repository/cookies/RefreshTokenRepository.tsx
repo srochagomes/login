@@ -1,7 +1,7 @@
 import { decryptData, encryptData } from "@/util/CryptoValue";
 import { ONE_DAY } from "@/util/FrameTimer"
 import { NextApiRequest, NextApiResponse } from "next";
-import { parseCookies, setCookie } from 'nookies';
+import nookies, { destroyCookie, parseCookies, setCookie } from 'nookies';
 
 const refreshTokenRepository = {
 
@@ -47,6 +47,15 @@ const refreshTokenRepository = {
 
         return null;
         
+    },
+    remove(refresh_token_id:string, res: NextApiResponse<ICredentialData | IErrorMessage>){
+        if (!refresh_token_id){
+            throw new Error('Refresh token id not found');
+        }               
+        
+        destroyCookie({res}, refresh_token_id,{path: '/'});
+        
+             
     }
     
 }

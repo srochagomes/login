@@ -1,5 +1,5 @@
 import { ONE_DAY } from "@/util/FrameTimer"
-import { parseCookies, setCookie } from 'nookies';
+import { parseCookies, setCookie, destroyCookie } from 'nookies';
 
 const accessTokenRepository = {
 
@@ -28,6 +28,9 @@ const accessTokenRepository = {
 
         return null;
         
+    },
+    remove(access_token_id:string){
+        destroyCookie(null, access_token_id);               
     }
     
 }
