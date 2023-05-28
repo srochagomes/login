@@ -1,5 +1,5 @@
 interface IAPIManager{
     getToken: () => string | null,
-    processRefreshToken: () => boolean,
+    processRefreshToken: () => Promise<boolean> ,
     redirect: () => void,
 }

@@ -1,8 +1,10 @@
-import axios from "axios";
+import axios, { HttpStatusCode } from "axios";
+import userAdapter from "./adapters/UserAdapter";
+import accessManager from "@/infra/api/auth/AccessManager";
 
 
 
-const callAPI = (baseURL: string) => {
+export const callAPI = (baseURL: string, tokenAdapterManager?: IAPIManager) => {
 
     const http = axios.create({
         baseURL: `${baseURL}`,
@@ -10,24 +12,70 @@ const callAPI = (baseURL: string) => {
         // Outras configurações do Axios (opcional)
       });
 
-      // if (tokenService?.hasToken()){
-      //     http.interceptors.request.use(function (config) {
-      //       // Do something before request is sent
-      //       config.headers.Authorization = `Bearer ${tokenService.get()}`
+      if (tokenAdapterManager){
+          http.interceptors.request.use(function (config) {
             
-      //       return config;
-      //     }, function (error) {
-      //       // Do something with request error
-      //       console.log('Erro no interceptor do axios')
-      //       return Promise.reject(error);
-      //     });
+            config.headers.Authorization = `Bearer ${tokenAdapterManager.getToken()}`  
+
+            return config;
+          }, function (error) {
+            
+            console.log('Erro no interceptor do axios')
+            return Promise.reject(error);
+          });
+
+          http.interceptors.response.use(
+            response => response,
+            async error => {
+              if ((error.response && error?.response?.status === HttpStatusCode.Unauthorized) 
+                  || error.code === 'ERR_NETWORK') {
+                try {
+                  if (await tokenAdapterManager.processRefreshToken()){
+                    error.config.headers['Authorization'] = `Bearer ${tokenAdapterManager.getToken()}`
+                    console.log('Token ATUALIZADO COM SUCESSO');
+                    return http.request(error.config);
+                  }                  
+
+                } catch (error) {
+                  console.log('passo4')
+                  console.error('Erro na atualização do token:', error);
+                }
+                
+              }
+              console.log('passo5')
+              tokenAdapterManager.redirect();              
+              error.response.headers.location = 'http:localhost:9090/?fdfd=3443';
+              return Promise.resolve(error)
+            }
+          );
       
-      // }
+      }
 
       return http;
 }
 
-export default callAPI;
+
+
+
+
+export const connectServiceHttp = {  
+    toAPI :{
+      withoutToken:()=> callAPI(`${process.env.NEXT_PUBLIC_APIGATEWAY_BASE_URL}`),
+      asApp:()=> callAPI(`${process.env.NEXT_PUBLIC_APIGATEWAY_BASE_URL}`),
+      asUser:()=> callAPI(`${process.env.NEXT_PUBLIC_APIGATEWAY_BASE_URL}`, userAdapter),
+    },
+    toBackend :{
+      withoutToken:()=> callAPI(`${process.env.NEXT_PUBLIC_BACKEND_URL}`),
+      asApp:()=> callAPI(`${process.env.NEXT_PUBLIC_BACKEND_URL}`),
+      asUser:()=> callAPI(`${process.env.NEXT_PUBLIC_BACKEND_URL}`),
+    }
+    
+  }
+
+
+
+
+
 
 export const headerJson = {
   headers: {

@@ -74,6 +74,18 @@ const userSession = {
         });     
 
     },
+    refresh(){
+      return identity.getRefreshTokenUser()
+      .then(async (userDataAPI:IAPIReturn)=>{
+          if (userDataAPI.status === HttpStatusCode.Ok){
+              writeTokenData(userDataAPI);
+              console.log("Atualizou token")
+              return {updated:true};
+          }
+          return await {updated:false};
+      });     
+
+    },
     logout(){
       return identity.logoutUser()
         .then((userDataAPI:IAPIReturn)=>{

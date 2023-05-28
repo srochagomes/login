@@ -1,17 +1,14 @@
-import { headerJson} from "@/infra/protocol/http/CallAPI";
-import callAPI from "@/infra/protocol/http/CallAPI";
-const USER_API_AUTH_SERVER = 'api/auth/user';
-const APP_API_AUTH_SERVER = 'api/auth/app';
-const LOGOUT_USER_API_AUTH_SERVER = 'api/auth/logout';
+import { connectServiceHttp, headerJson} from "@/infra/protocol/http/CallAPI";
+
 
 
 const identity = {
 
-    getTokenUser : async (user: IUserAuth) => {
-        let baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-        let api = callAPI(`${baseURL}`);
+    getTokenUser : async (user: IUserAuth) => {        
+        
+        let api = connectServiceHttp.toBackend.withoutToken();
 
-        let response =  await api.post(USER_API_AUTH_SERVER, user, headerJson)
+        let response =  await api.post(`${process.env.NEXT_PUBLIC_BACKEND_USER_LOGIN}`, user, headerJson)
         .then(response => {                        
             return { 
               status: response.status,  
@@ -25,11 +22,28 @@ const identity = {
    
           return response; 
     },
-    logoutUser : async () => {
-      let baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-      let api = callAPI(`${baseURL}`);
+    getRefreshTokenUser : () => {        
+        
+      let api = connectServiceHttp.toBackend.withoutToken();
 
-      let response =  await api.delete(LOGOUT_USER_API_AUTH_SERVER, headerJson)
+      let response =  api.post(`${process.env.NEXT_PUBLIC_BACKEND_REFRESH_TOKEN}`, {type_refresh:'user'}, headerJson)
+      .then(async(response) => {                        
+          return await { 
+            status: response.status,  
+            data: response.data}
+        }).catch(async(error) => {
+          
+          return await {
+            status: error?.response?.status, 
+            data: error?.response?.data}
+        });
+ 
+        return response; 
+  },
+    logoutUser : async () => {
+      let api = connectServiceHttp.toBackend.withoutToken();
+
+      let response =  await api.delete(`${process.env.NEXT_PUBLIC_BACKEND_USER_LOGOUT}`, headerJson)
       .then(response => {                        
           return { 
             status: response.status,  
@@ -46,10 +60,9 @@ const identity = {
 
 
     getTokenApp : async () => {
-      let baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-      let api = callAPI(`${baseURL}`);
+      let api = connectServiceHttp.toBackend.withoutToken();
 
-      let response =  await api.post(APP_API_AUTH_SERVER, null, headerJson)
+      let response =  await api.post(`${process.env.NEXT_PUBLIC_BACKEND_APP_LOGIN}`, null, headerJson)
       .then(response => {
           return { 
             status: response.status, 
@@ -62,7 +75,25 @@ const identity = {
         });
         
         return response; 
-  }
+  },
+  getRefreshTokenApp : async () => {        
+      
+    let api = connectServiceHttp.toBackend.withoutToken();
+
+    let response =  await api.post(`${process.env.NEXT_PUBLIC_BACKEND_REFRESH_TOKEN}`, {type_refresh:'app'}, headerJson)
+    .then(response => {                        
+        return { 
+          status: response.status,  
+          data: response.data}
+      }).catch(error => {
+        
+        return {
+          status: error?.response?.status, 
+          data: error?.response?.data}
+      });
+
+      return response; 
+}
     
 }
 

@@ -4,11 +4,12 @@ const applicationAdapter:IAPIManager = {
     getToken() {
         return applicationSession.accessToken();
     },
-
-    processRefreshToken() {
-        return false;
+    processRefreshToken: () => {
+        return new Promise(Boolean);
     },
     redirect() {
         
     },
 }
+
+export default applicationAdapter;

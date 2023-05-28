@@ -4,6 +4,7 @@ interface ICredentialAuth{
     client_secret: string,
     username?: string | undefined,
     password?: string | undefined,
-    scope: string
+    refresh_token?: string | null | undefined,
+    scope?: string | undefined
  
 }

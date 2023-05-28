@@ -13,6 +13,8 @@ const inter = Inter({ subsets: ['latin'] })
 export default function PrincipalHome() {
     const userLogged = useSelector((state:any) => state.userLoggedState);
     
+    console.log("Principal Home");
+    
     const dispatch = useDispatch();
     useEffect(() => {
       dispatch(verifyUserLogged());
