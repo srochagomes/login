@@ -42,9 +42,9 @@ export const callAPI = (baseURL: string, tokenAdapterManager?: IAPIManager) => {
                 }
                 
               }
-              console.log('passo5')
+              
               tokenAdapterManager.redirect();              
-              error.response.headers.location = 'http:localhost:9090/?fdfd=3443';
+              
               return Promise.resolve(error)
             }
           );
