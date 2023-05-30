@@ -30,22 +30,22 @@ export const callAPI = (baseURL: string, tokenAdapterManager?: IAPIManager) => {
               if ((error.response && error?.response?.status === HttpStatusCode.Unauthorized) 
                   || error.code === 'ERR_NETWORK') {
                 try {
-                  if (await tokenAdapterManager.processRefreshToken()){
+                  let refreshProcess: IAPIReturn = await tokenAdapterManager.processRefreshToken();
+                  if (refreshProcess.status === HttpStatusCode.Ok){
                     error.config.headers['Authorization'] = `Bearer ${tokenAdapterManager.getToken()}`
                     console.log('Token ATUALIZADO COM SUCESSO');
                     return http.request(error.config);
+                  }else{                    
+                    error = refreshProcess;                    
                   }                  
 
                 } catch (error) {
                   console.log('passo4')
                   console.error('Erro na atualização do token:', error);
-                }
-                
+                }                                
               }
               
-              tokenAdapterManager.redirect();              
-              
-              return Promise.resolve(error)
+              return Promise.reject(error)
             }
           );
       

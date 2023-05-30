@@ -79,10 +79,9 @@ const userSession = {
       .then(async (userDataAPI:IAPIReturn)=>{
           if (userDataAPI.status === HttpStatusCode.Ok){
               writeTokenData(userDataAPI);
-              console.log("Atualizou token")
-              return {updated:true};
+              console.log("Atualizou token")              
           }
-          return await {updated:false};
+          return await userDataAPI;;
       });     
 
     },

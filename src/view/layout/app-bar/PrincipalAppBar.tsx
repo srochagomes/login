@@ -17,6 +17,8 @@ import userSession from '@/domain/session/UserSession';
 
 import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 import { openDialogLogin} from '@/store/reducers/dialogs/LoginState';
+import { useRouter } from 'next/router';
+import { HttpStatusCode } from 'axios';
 
 interface Props {
   /**
@@ -44,6 +46,10 @@ function HideOnScroll(props: Props) {
 }
 
 export default function PrincipalAppBar() {
+  
+  
+  const router = useRouter();
+  
   const userLogged = useSelector((state:any) => state.userLoggedState);
   const dispatch = useDispatch();
   const [openLoginDialog, setOpenLoginDialog] = React.useState(false);
@@ -79,9 +85,13 @@ export default function PrincipalAppBar() {
   };
 
   const handleProfile = () => {
-    userSession.session().then((body)=>{
-      console.log('Sessão :', body);
+     userSession.session().then(async (body)=>{
+      await console.log('Sessão :', body);
+      if (body?.status !== HttpStatusCode.Ok){
+        router.push('/?requiredUser=true');
+      }
     });
+
   };
 
 

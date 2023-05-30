@@ -1,3 +1,6 @@
+
+import { useRouter } from 'next/router';
+
 import { Inter } from 'next/font/google'
 import Grid from '@mui/material/Grid'; // Grid version 2
 import Paper from '@mui/material/Paper';
@@ -7,18 +10,37 @@ import { useSelector, useDispatch } from 'react-redux';
 import applicationSession from '@/domain/session/ApplicationSession';
 import { useState, useEffect } from 'react';
 import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
+import { openDialogLogin } from '@/store/reducers/dialogs/LoginState';
 const inter = Inter({ subsets: ['latin'] })
 
 
 export default function PrincipalHome() {
     const userLogged = useSelector((state:any) => state.userLoggedState);
+    const loginDialog = useSelector((state:any) => state.loginDialogState);
+    const router = useRouter();
+    const { pathname, query } = router;
+    let { requiredUser } = query;    
     
+
     console.log("Principal Home");
     
     const dispatch = useDispatch();
+
     useEffect(() => {
       dispatch(verifyUserLogged());
     }, [])
+
+    useEffect(() => {      
+      if (requiredUser){
+        dispatch(openDialogLogin());
+        delete query.requiredUser;    
+        router.replace({
+          pathname,
+          query
+        });
+      };      
+    }, [requiredUser])
+
 
 
     applicationSession.register().then((obj)=>{

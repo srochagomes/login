@@ -6,10 +6,7 @@ const applicationAdapter:IAPIManager = {
     },
     processRefreshToken: () => {
         return new Promise(Boolean);
-    },
-    redirect() {
-        
-    },
+    }
 }
 
 export default applicationAdapter;

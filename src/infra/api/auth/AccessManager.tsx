@@ -62,7 +62,7 @@ const accessManager = {
             return {
                 status: error?.response?.status,
                 statusText: error?.response?.statusText,
-                data: error.response?.data                
+                data: error.response?.data
             }
           });       
           
@@ -80,7 +80,7 @@ const accessManager = {
         
         return await api.get<IAPIReturn>(apiAddress,headerJson)
         .then((response) => {          
-                 
+            console.log("Info",response);     
             let dataReturn: IAPIReturn =  {
                 status:  response.status,
                 statusText:   response.statusText,
@@ -89,11 +89,11 @@ const accessManager = {
             return dataReturn;
           })
           .catch((error) => {
-            
+            console.log("Error:",error);
             return {
-                status: error?.response?.status,
-                statusText: error?.response?.statusText,
-                data: error.response?.data                
+                status: error?.status,
+                statusText: error?.statusText,
+                data: error.data                
             }
           });       
 

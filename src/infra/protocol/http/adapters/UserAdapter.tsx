@@ -1,6 +1,6 @@
 
 import userSession from "@/domain/session/UserSession";
-import { useRouter } from 'next/router';
+
 
 const userAdapter:IAPIManager = {
     getToken() {
@@ -10,17 +10,13 @@ const userAdapter:IAPIManager = {
         return userSession.refresh()
           .then((dado) => {
             console.log('Valor do processamento dentro:', dado);
-            return dado.updated;
+            return dado;
           })
           .catch((error) => {
-            return false;
+            return error;
           });
       },
-    redirect() {
-        console.log('Chamando nova rota:');
-        const router = useRouter();
-        router.push('/?error=401');
-    },
+    
 }
 
 export default userAdapter;
