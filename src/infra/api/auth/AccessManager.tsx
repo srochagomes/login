@@ -93,7 +93,8 @@ const accessManager = {
             return {
                 status: error?.status,
                 statusText: error?.statusText,
-                data: error.data                
+                data: error.data,  
+                requireLogin: error.requireLogin              
             }
           });       
 

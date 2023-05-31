@@ -19,6 +19,7 @@ import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 import { openDialogLogin} from '@/store/reducers/dialogs/LoginState';
 import { useRouter } from 'next/router';
 import { HttpStatusCode } from 'axios';
+import verifyRequiredLogin from '@/actions/VerifyRequireLogin';
 
 interface Props {
   /**
@@ -87,9 +88,8 @@ export default function PrincipalAppBar() {
   const handleProfile = () => {
      userSession.session().then(async (body)=>{
       await console.log('Sessão :', body);
-      if (body?.status !== HttpStatusCode.Ok){
-        router.push('/?requiredUser=true');
-      }
+      verifyRequiredLogin(router,body);
+      
     });
 
   };

@@ -7,6 +7,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import accessTokenRepository from '@/infra/repository/cookies/AccessTokenRepository';
 import { decryptData } from '@/util/CryptoValue';
 import refreshTokenStoreService from '@/domain/auth/RefreshTokenStoreService';
+import { HttpStatusCode } from 'axios';
 
 type Data = {
   name: string
@@ -59,6 +60,7 @@ const controllers = {
     
     return res.status(apiReturn.status).json({
       type_refresh: typeRefresh===USER_TYPE?USER_TYPE:APP_TYPE,
+      requireLogin: typeRefresh===USER_TYPE && apiReturn.data !== HttpStatusCode.Ok,
       ...apiReturn.data,
     });
   }
