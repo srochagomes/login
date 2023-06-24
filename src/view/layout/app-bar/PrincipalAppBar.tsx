@@ -8,7 +8,7 @@ import Slide from '@mui/material/Slide';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import LoginDialog from '@/view/screens/dialogs/LogingDialog';
+import LoginDialog from '@/view/screens/dialogs/identification/LogingDialog';
 import { useSelector, useDispatch } from 'react-redux';
 import { AccountCircle } from '@mui/icons-material';
 import { Box, Menu, MenuItem } from '@mui/material';

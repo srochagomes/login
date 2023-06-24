@@ -2,9 +2,8 @@ import React, { useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import PrincipalAppBar from '@/view/layout/app-bar/PrincipalAppBar';
 import PrincipalFooter from '@/view/layout/footer/PrincipalFooter';
-import LoginDialog from '../screens/dialogs/LogingDialog';
-import { useDispatch, useSelector } from 'react-redux';
-import { closeDialogLogin } from '@/store/reducers/dialogs/LoginState';
+import { useSelector } from 'react-redux';
+import IdentificationDialog from '../screens/dialogs/identification/IdentificationDialog';
 
 
 interface LinkProps {
@@ -14,19 +13,10 @@ interface LinkProps {
 const PrincipalLayout = ({children}:LinkProps) => { 
     const [openLoginDialog, setOpenLoginDialog] = React.useState(false);
     const loginDialog = useSelector((state:any) => state.loginDialogState);
-    const dispatch = useDispatch();    
 
     useEffect(() => {
         setOpenLoginDialog(loginDialog.open)
       }, [loginDialog.open])
-
-
-   
-    const oncloseWindow = () => {
-        dispatch(closeDialogLogin);    
-    };
-        
-    
     
     return (
     <>
@@ -37,7 +27,7 @@ const PrincipalLayout = ({children}:LinkProps) => {
             </Grid>
             <PrincipalFooter/>
         </Grid>
-        <LoginDialog openWindow={openLoginDialog} oncloseWindow={oncloseWindow}/>
+        <IdentificationDialog openWindow={openLoginDialog}/>
     </>
 )};
 
