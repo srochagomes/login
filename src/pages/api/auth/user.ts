@@ -2,9 +2,7 @@
 import { GetServerSidePropsContext } from 'next';
 import accessManagerAPI from '@/infra/api/auth/AccessManager';
 
-import refreshTokenRepository from '@/infra/repository/cookies/RefreshTokenRepository';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import accessTokenRepository from '@/infra/repository/cookies/AccessTokenRepository';
 import { decryptData } from '@/util/CryptoValue';
 import refreshTokenStoreService from '@/domain/auth/RefreshTokenStoreService';
 

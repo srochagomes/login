@@ -1,8 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { GetServerSidePropsContext } from 'next';
-import accessManagerAPI from '@/infra/api/auth/AccessManager';
 
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { decryptData } from '@/util/CryptoValue';
+import accountManager from '@/infra/api/account/AccountManager';
 import refreshTokenStoreService from '@/domain/auth/RefreshTokenStoreService';
 
 type Data = {
@@ -11,33 +12,25 @@ type Data = {
 
 
 const controllers = {
-  async login(req: NextApiRequest, res: NextApiResponse<ICredentialData | IErrorMessage>) {    
+  async create(req: NextApiRequest, res: NextApiResponse<ICredentialData | IErrorMessage>) {
     
-    let client_id = process.env.APP_CLIENT_ID;
-    let client_secret = process.env.APP_CLIENT_SECRET;
-    if (!client_id){
-      throw new Error('Client id not configured.');
-    }
-    if (!client_secret){
-      throw new Error('Client secret not configured.');
-    }
-    
-    let credential = {
-      client_id,
-      client_secret,      
-      grant_type: "client_credentials",
-      scope: "roles email openid acr"  
+    let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
+
+    if(!data){
+      throw new Error('Key encript should be informed.');
     }
 
-    let apiReturn : IAPIReturn = await accessManagerAPI.getCredentialAccess(credential);
-    
-    if (apiReturn?.data?.refresh_token){
-      refreshTokenStoreService.toApp(apiReturn.data.refresh_token, res);
-      //remover o refreshtoken por segurança
-      delete apiReturn.data.refresh_token;
+    console.log("Body enviado"+req.body)
+    let newAccount:INewAccount = {  
+      
+      ...req.body,      
     }
 
+    newAccount.password = decryptData(newAccount.password, data);
+    
 
+    let apiReturn : IAPIReturn = await accountManager.createNew(newAccount);
+    
     return res.status(apiReturn.status).json({
       ...apiReturn.data,
     });
@@ -47,7 +40,7 @@ const controllers = {
 
 
 const controllerBy = {
-  POST: controllers.login,
+  POST: controllers.create,
   OPTIONS: (_: NextApiRequest, res: NextApiResponse) => res.send('OK'),
 }
 

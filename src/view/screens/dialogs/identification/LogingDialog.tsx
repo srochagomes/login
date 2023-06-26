@@ -12,12 +12,17 @@ import { Facebook, Google, LinkedIn } from '@mui/icons-material';
 import Link from '@mui/material/Link';
 
 import { encryptData } from '@/util/CryptoValue';
-import { useDispatch } from 'react-redux';
 import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 
 
 import userSession from '@/domain/session/UserSession';
 import { HttpStatusCode } from 'axios';
+import { IndentificationScreenType } from './IdentificationDialog';
+
+import { useDispatch } from 'react-redux';
+
+import { closeDialogLogin, openDialogNewAccount} from '@/store/reducers/dialogs/LoginState';
+
 
 const useStyles = makeStyles((theme) => ({
   myDialogTitle: {
@@ -63,18 +68,15 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-interface Props{
-  oncloseWindow: () => void;
-  goToDialog: () => void;
-}
 
-export default function LoginDialog(props:Props) {
+
+export default function LoginDialog() {
   const classes = useStyles();  
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [messageLogin, setMessageLogin] = React.useState('');
   const dispatch = useDispatch();
-  const {oncloseWindow, goToDialog} = props;
+  
 
   const clearData = () => {
     setEmail('');
@@ -126,7 +128,7 @@ export default function LoginDialog(props:Props) {
 
   const handleClose = () => {  
     clearData()  
-    oncloseWindow();
+    dispatch(closeDialogLogin())
   };
 
 
@@ -174,7 +176,7 @@ export default function LoginDialog(props:Props) {
                     Não tenho conta. <Link
                                   component="button"
                                   variant="body2"
-                                  onClick={()=>goToDialog()}>
+                                  onClick={()=>dispatch(openDialogNewAccount())}>
                                 Cadastrar-me!
                               </Link>
                 </Grid>

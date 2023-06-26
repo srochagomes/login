@@ -1,5 +1,7 @@
 import axios, { HttpStatusCode } from "axios";
 import userAdapter from "./adapters/UserAdapter";
+import applicationAdapter from "./adapters/ApplicationAdapter";
+
 import accessManager from "@/infra/api/auth/AccessManager";
 
 
@@ -30,6 +32,7 @@ export const callAPI = (baseURL: string, tokenAdapterManager?: IAPIManager) => {
               if ((error.response && error?.response?.status === HttpStatusCode.Unauthorized) 
                   || error.code === 'ERR_NETWORK') {
                 try {
+                  
                   let refreshProcess: IAPIReturn = await tokenAdapterManager.processRefreshToken();
                   if (refreshProcess.status === HttpStatusCode.Ok){
                     error.config.headers['Authorization'] = `Bearer ${tokenAdapterManager.getToken()}`
@@ -61,7 +64,7 @@ export const callAPI = (baseURL: string, tokenAdapterManager?: IAPIManager) => {
 export const connectServiceHttp = {  
     toAPI :{
       withoutToken:()=> callAPI(`${process.env.NEXT_PUBLIC_APIGATEWAY_BASE_URL}`),
-      asApp:()=> callAPI(`${process.env.NEXT_PUBLIC_APIGATEWAY_BASE_URL}`),
+      asApp:()=> callAPI(`${process.env.NEXT_PUBLIC_APIGATEWAY_BASE_URL}`, applicationAdapter),
       asUser:()=> callAPI(`${process.env.NEXT_PUBLIC_APIGATEWAY_BASE_URL}`, userAdapter),
     },
     toBackend :{

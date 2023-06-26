@@ -17,7 +17,7 @@ const refreshTokenRepository = {
         if (!key_cript){
             throw new Error('Key not configured.');
         }
-        
+        console.log("salvando identificador do cookie",refresh_token_id)
         setCookie({res}, refresh_token_id, encryptData( newRefreshToken, key_cript), {
             httpOnly: true,
             sameSite: 'lax',
@@ -40,7 +40,9 @@ const refreshTokenRepository = {
         }
 
         const cookies = parseCookies({req});        
+        
         const refreshToken = cookies[refresh_token_id]
+        console.log("refreshToken",refreshToken)
         if (refreshToken){
             return decryptData( cookies[refresh_token_id], key_cript);
         }

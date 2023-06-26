@@ -1,5 +1,5 @@
 import accessTokenRepository from "@/infra/repository/cookies/AccessTokenRepository"
-import identity from "@/infra/api/server/Identity"
+import identity from "@/infra/api/server/IdentityConnect"
 import { HttpStatusCode } from "axios";
 
 
@@ -37,7 +37,18 @@ const applicationSession = {
         throw new Error('Access token should be informed.');
       }
       return accessTokenRepository.get(access_token_id);
-    }
+    },
+    refresh(){
+      return identity.getRefreshTokenApp()
+      .then(async (userDataAPI:IAPIReturn)=>{
+          if (userDataAPI.status === HttpStatusCode.Ok){
+              writeTokenData(userDataAPI);
+              console.log("Atualizou token")              
+          }
+          return await userDataAPI;;
+      });     
+
+    },
 
 
 }

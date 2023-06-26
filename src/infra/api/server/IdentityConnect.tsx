@@ -2,7 +2,7 @@ import { connectServiceHttp, headerJson} from "@/infra/protocol/http/CallAPI";
 
 
 
-const identity = {
+const identityConnect = {
 
     getTokenUser : async (user: IUserAuth) => {        
         
@@ -58,8 +58,7 @@ const identity = {
         return response; 
   },
 
-
-    getTokenApp : async () => {
+  getTokenApp : async () => {
       let api = connectServiceHttp.toBackend.withoutToken();
 
       let response =  await api.post(`${process.env.NEXT_PUBLIC_BACKEND_APP_LOGIN}`, null, headerJson)
@@ -97,4 +96,4 @@ const identity = {
     
 }
 
-export default identity;
+export default identityConnect;

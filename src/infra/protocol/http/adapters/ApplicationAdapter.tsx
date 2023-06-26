@@ -5,8 +5,16 @@ const applicationAdapter:IAPIManager = {
         return applicationSession.accessToken();
     },
     processRefreshToken: () => {
-        return new Promise(Boolean);
-    }
-}
+        return applicationSession.refresh()
+          .then((dado) => {
+            console.log('Valor do processamento dentro:', dado);
+            return dado;
+          })
+          .catch((error) => {
+            return error;
+          });
+      }
+  }
+
 
 export default applicationAdapter;

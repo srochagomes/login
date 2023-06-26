@@ -10,7 +10,7 @@ import { Grid, makeStyles } from '@material-ui/core';
 import Link from '@mui/material/Link';
 
 import { encryptData } from '@/util/CryptoValue';
-import { useDispatch } from 'react-redux';
+
 import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -18,6 +18,13 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import userSession from '@/domain/session/UserSession';
 import { HttpStatusCode } from 'axios';
 import { Typography } from '@mui/material';
+
+
+import { useDispatch } from 'react-redux';
+
+import { closeDialogLogin, openDialogLogin} from '@/store/reducers/dialogs/LoginState';
+import account from '@/domain/account/Account';
+
 
 const useStyles = makeStyles((theme) => ({
   myDialogTitle: {
@@ -63,22 +70,19 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-interface Props{
-  oncloseWindow: () => void;
-  goToDialog: () => void;
-}
 
-export default function NewAccountDialog(props:Props) {
+export default function NewAccountDialog() {
   const classes = useStyles();  
   
   const [formValidated, setFormValidated] = React.useState(false);
   const [email, setEmail] = React.useState('');
-  const [nome, setNome] = React.useState('');  
+  const [name, setName] = React.useState('');  
   const [password, setPassword] = React.useState('');
   const [passwordConfirm, setPasswordConfirm] = React.useState('');
   const [messageLogin, setMessageLogin] = React.useState('');
+  const [termAccept, setTermAccept] = React.useState(false);
   const dispatch = useDispatch();
-  const {oncloseWindow, goToDialog} = props;
+  
 
   const clearData = () => {
     setEmail('');
@@ -94,7 +98,7 @@ export default function NewAccountDialog(props:Props) {
 
 
   const handleNome = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNome(event.target.value);
+    setName(event.target.value);
     startData();
   };
 
@@ -112,7 +116,13 @@ export default function NewAccountDialog(props:Props) {
     startData();
   };
 
-  const handleLogin = () => {    
+  const handleTermAcceptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTermAccept(Boolean(event.target.value));
+    startData();
+  };
+
+
+  const handleNewAccount = () => {    
     setFormValidated(true)
     
     let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
@@ -120,37 +130,42 @@ export default function NewAccountDialog(props:Props) {
       throw new Error('Key encript should be informed.');
     }
 
-
-    let user : IUserAuth = {
+    
+    let newAccount : INewAccount = {
+      application: "teste",
+      name: name,
       username: email,
-      password: encryptData(password, data)
+      email: email,
+      password: encryptData(password, data),
+      passwordConfirmed: encryptData(passwordConfirm, data),
+      termAccept: termAccept
     }
 
-    userSession.register(user)
-          .then((body)=>{            
-            if (body.status !== HttpStatusCode.Ok){
-               if (body.status == HttpStatusCode.Unauthorized) 
-                setMessageLogin('Usuário e/ou senha invalido!');
-               else if (body.status == HttpStatusCode.Forbidden) 
-                setMessageLogin('Usuário não pode acessar!');
-               else 
-                setMessageLogin(body?.data?.description);
-            }else{             
-              dispatch(verifyUserLogged());
-              oncloseWindow();
-            }
-          });    
-    
+    account.create(newAccount)
+    .then((body)=>{            
+      if (body.status !== HttpStatusCode.Ok){
+         if (body.status == HttpStatusCode.Unauthorized) 
+          setMessageLogin('Aplicação não pode criar uma nova conta!');
+         else if (body.status == HttpStatusCode.Forbidden) 
+          setMessageLogin('Aplicação não pode criar uma nova conta!');
+         else 
+          setMessageLogin(body?.data?.description);
+      }else{             
+        //dispatch(verifyUserLogged()); validar fluxo
+        handleClose();
+      }
+    });    
       
   };
 
 
   const handleClose = () => {    
-    oncloseWindow();
+    clearData();  
+    dispatch(closeDialogLogin());
   };
 
   const isValidName = () => {    
-    if (nome !== ""){
+    if (name !== ""){
       return true;
     }
 
@@ -159,36 +174,31 @@ export default function NewAccountDialog(props:Props) {
 
   
 
-  const handleLoginSocial = (provider:string) => {
-    // TODO: Implement login logic with social provider
-
-    handleClose();
-  };
   
   const termAcceptComponent = <>
   
     <Checkbox onChange={handlePasswordConfirmChange}/>
-    <Grid item xs={12}>
-      <Typography variant="body2" gutterBottom>
-      <div><span>LI E ACEITO OS </span>
+    
+      
+      <div><span><Typography variant="body2" gutterBottom>LI E ACEITO OS </Typography></span>
         
       <Link
           component="button"
           variant="caption"
-          onClick={()=>goToDialog()}>
-         TERMOS E CONDIÇÕES DE USO 
+          onClick={()=>handleClose}>
+         <Typography variant="body2" gutterBottom>TERMOS E CONDIÇÕES DE USO </Typography>
       </Link>
       
       <span> E </span>
       <Link
           component="button"
           variant="caption"
-          onClick={()=>goToDialog()}>
-        POLÍTICAS DE PRIVACIDADE DA PLATAFORMA
+          onClick={()=>handleClose}>
+        <Typography variant="body2" gutterBottom>POLÍTICAS DE PRIVACIDADE DA PLATAFORMA</Typography>
       </Link>
       </div>
-      </Typography>
-    </Grid>
+      
+    
   </>
 
 
@@ -196,7 +206,7 @@ export default function NewAccountDialog(props:Props) {
     <div>      
         <DialogTitle className={classes.myDialogTitle}> Crie uma conta</DialogTitle>        
         <DialogContent>
-        
+          
           <Grid container spacing={2} justifyContent="center"  alignItems="center">                
                 
                 <Grid item xs={12}>
@@ -207,7 +217,7 @@ export default function NewAccountDialog(props:Props) {
                     fullWidth
                     variant="outlined"
                     label="Nome"                    
-                    value={nome}
+                    value={name}
                     onChange={handleNome}                      
                     required
                     error= {formValidated && !isValidName()}
@@ -248,18 +258,15 @@ export default function NewAccountDialog(props:Props) {
                     onChange={handlePasswordConfirmChange}
                 />
                 </Grid>
-                <Grid item xs={12}>
-                  <FormControlLabel                    
-                    control={termAcceptComponent}
-                    required
-                    label=""
-                    labelPlacement="end"
-                  />
+                <Grid container direction="row" xs={12}>
+                                      
+                    {termAcceptComponent}                    
+                    
                 </Grid>
                 
 
                 <Grid item xs={12}>
-                <Button variant="contained" color="primary" fullWidth onClick={handleLogin}>
+                <Button variant="contained" color="primary" fullWidth onClick={handleNewAccount}>
                     Cadastrar
                 </Button>                
                 </Grid>
@@ -267,7 +274,7 @@ export default function NewAccountDialog(props:Props) {
                     Já tenho uma conta. <Link
                                   component="button"
                                   variant="body2"
-                                  onClick={()=>goToDialog()}>
+                                  onClick={()=>dispatch(openDialogLogin())}>
                                 Realizar o meu Login!
                               </Link>
                 </Grid>

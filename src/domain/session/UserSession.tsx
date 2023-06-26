@@ -1,9 +1,10 @@
-import identity from "@/infra/api/server/Identity"
+import identity from "@/infra/api/server/IdentityConnect"
 import { HttpStatusCode } from "axios";
 import accessTokenRepository from "@/infra/repository/cookies/AccessTokenRepository"
 import loggedRepository from "@/infra/repository/user/LoggedRepository";
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import accessManager from "@/infra/api/auth/AccessManager";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 
 const writeTokenData = (authAPIData: IAPIReturn): void =>{
@@ -74,7 +75,7 @@ const userSession = {
         });     
 
     },
-    refresh(){
+    refresh(cookie?: RequestCookie){
       return identity.getRefreshTokenUser()
       .then(async (userDataAPI:IAPIReturn)=>{
           if (userDataAPI.status === HttpStatusCode.Ok){

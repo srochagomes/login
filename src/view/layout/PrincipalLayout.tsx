@@ -3,20 +3,14 @@ import Grid from '@material-ui/core/Grid';
 import PrincipalAppBar from '@/view/layout/app-bar/PrincipalAppBar';
 import PrincipalFooter from '@/view/layout/footer/PrincipalFooter';
 import { useSelector } from 'react-redux';
-import IdentificationDialog from '../screens/dialogs/identification/IdentificationDialog';
+import IdentificationDialog, { IndentificationScreenType } from '../screens/dialogs/identification/IdentificationDialog';
 
 
 interface LinkProps {
     children?: any;
 }
 
-const PrincipalLayout = ({children}:LinkProps) => { 
-    const [openLoginDialog, setOpenLoginDialog] = React.useState(false);
-    const loginDialog = useSelector((state:any) => state.loginDialogState);
-
-    useEffect(() => {
-        setOpenLoginDialog(loginDialog.open)
-      }, [loginDialog.open])
+const PrincipalLayout = ({children}:LinkProps) => {     
     
     return (
     <>
@@ -27,7 +21,7 @@ const PrincipalLayout = ({children}:LinkProps) => {
             </Grid>
             <PrincipalFooter/>
         </Grid>
-        <IdentificationDialog openWindow={openLoginDialog}/>
+        <IdentificationDialog/>
     </>
 )};
 
