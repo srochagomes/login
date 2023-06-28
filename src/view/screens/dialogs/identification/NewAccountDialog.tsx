@@ -5,8 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Alert from '@mui/material/Alert';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Grid, makeStyles } from '@material-ui/core';
-
+import { makeStyles } from '@material-ui/core';
 import Link from '@mui/material/Link';
 
 import { encryptData } from '@/util/CryptoValue';
@@ -17,14 +16,23 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import userSession from '@/domain/session/UserSession';
 import { HttpStatusCode } from 'axios';
-import { Typography } from '@mui/material';
+import { FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material';
 
 
 import { useDispatch } from 'react-redux';
 
 import { closeDialogLogin, openDialogLogin} from '@/store/reducers/dialogs/LoginState';
 import account from '@/domain/account/Account';
-
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import FormBase from '@/view/components/catalogs/form/FormBase';
+import TextFieldForm from '@/view/components/catalogs/form/fields/TextFielForm';
+import PasswordFieldForm from '@/view/components/catalogs/form/fields/PasswordFieldForm';
+import CheckBoxFieldForm from '@/view/components/catalogs/form/fields/CheckBoxFieldForm';
+import ButtonForm from '@/view/components/catalogs/form/button/ButtonForm';
+import CustomAreaForm from '@/view/components/catalogs/form/custom/CustomAreaForm';
 
 const useStyles = makeStyles((theme) => ({
   myDialogTitle: {
@@ -74,13 +82,22 @@ const useStyles = makeStyles((theme) => ({
 export default function NewAccountDialog() {
   const classes = useStyles();  
   
-  const [formValidated, setFormValidated] = React.useState(false);
+  
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');  
   const [password, setPassword] = React.useState('');
   const [passwordConfirm, setPasswordConfirm] = React.useState('');
   const [messageLogin, setMessageLogin] = React.useState('');
   const [termAccept, setTermAccept] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [dadosFormulario, setDadosFormulario] = React.useState({
+    name: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+    termAccept: false
+  });
+  const [errosFormulario, setErrosFormulario] =  React.useState({});
   const dispatch = useDispatch();
   
 
@@ -93,68 +110,55 @@ export default function NewAccountDialog() {
 
   const startData = () => {
     setMessageLogin('');
-    setFormValidated(false);
+    setErrosFormulario({});
+  };
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
   };
 
 
-  const handleNome = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-    startData();
-  };
-
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
-    startData();
-  };
-
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
-    startData();
-  };
-  const handlePasswordConfirmChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordConfirm(event.target.value);
-    startData();
-  };
-
-  const handleTermAcceptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTermAccept(Boolean(event.target.value));
-    startData();
-  };
-
-
-  const handleNewAccount = () => {    
-    setFormValidated(true)
+  const handleNewAccount = () => {        
     
-    let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
-    if(!data){
-      throw new Error('Key encript should be informed.');
-    }
-
     
-    let newAccount : INewAccount = {
-      application: "teste",
-      name: name,
-      username: email,
-      email: email,
-      password: encryptData(password, data),
-      passwordConfirmed: encryptData(passwordConfirm, data),
-      termAccept: termAccept
-    }
-
-    account.create(newAccount)
-    .then((body)=>{            
-      if (body.status !== HttpStatusCode.Ok){
-         if (body.status == HttpStatusCode.Unauthorized) 
-          setMessageLogin('Aplicação não pode criar uma nova conta!');
-         else if (body.status == HttpStatusCode.Forbidden) 
-          setMessageLogin('Aplicação não pode criar uma nova conta!');
-         else 
-          setMessageLogin(body?.data?.description);
-      }else{             
-        //dispatch(verifyUserLogged()); validar fluxo
-        handleClose();
+    
+    if (validForm()){
+      let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
+      if(!data){
+        throw new Error('Key encript should be informed.');
       }
-    });    
+
+      
+      let newAccount : INewAccount = {
+        application: "teste",
+        name: name,
+        username: email,
+        email: email,
+        password: encryptData(password, data),
+        passwordConfirmed: encryptData(passwordConfirm, data),
+        termAccept: termAccept
+      }
+
+      account.create(newAccount)
+      .then((body)=>{            
+        if (body.status !== HttpStatusCode.Ok){
+          if (body.status == HttpStatusCode.Unauthorized) 
+            setMessageLogin('Aplicação não pode criar uma nova conta!');
+          else if (body.status == HttpStatusCode.Forbidden) 
+            setMessageLogin('Aplicação não pode criar uma nova conta!');
+          else 
+            setMessageLogin(body?.data?.description);
+        }else{             
+          //dispatch(verifyUserLogged()); validar fluxo
+          handleClose();
+        }
+      });    
+
+    }
+    
+    
       
   };
 
@@ -173,113 +177,120 @@ export default function NewAccountDialog() {
   };
 
   
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    
+    const { name, value } = event.target;    
+    const newData = 
+    {  ...dadosFormulario,
+      [name]: value}  
+    
+    setDadosFormulario(newData);
+  };
+  
+
+  const isValidForm = () => {
+    return Object.keys(errosFormulario).length === 0;
+  }
+
+  const validForm = () => {    
+    
+    let errorData = {}
+
+
+
+    const { name, email } = dadosFormulario;
+    
+
+    // Validar campo obrigatório do nome
+    if (!name.trim()) {      
+      errorData = {
+        ...errorData,
+        name: 'Campo obrigatório'
+      }
+    }
+
+    // Validar campo obrigatório do e-mail
+    if (!email.trim()) {
+      errorData = {
+        ...errorData,
+        email: 'Campo obrigatório'
+      }
+      
+      
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errorData = {
+        ...errorData,
+        email: 'E-mail inválido'
+      }
+    }
+
+    setErrosFormulario(errorData);    
+    console.log("Valor erro ", Object.keys(errosFormulario))
+    console.log("Valor erro tamanho", Object.keys(errosFormulario).length)
+    console.log("função ", isValidForm())
+    return Object.keys(errorData).length === 0 ;
+  };
+
 
   
-  const termAcceptComponent = <>
+  const termAcceptComponent = <div><span><Typography variant="caption" gutterBottom>LI E ACEITO OS </Typography>
+                              <Link          
+                                  variant="caption"
+                                  onClick={()=>handleClose}>
+                                <Typography variant="caption" gutterBottom>TERMOS E CONDIÇÕES DE USO </Typography>
+                              </Link>
+                              
+                              <Typography variant="caption" gutterBottom> E </Typography>
+                              <Link          
+                                  variant="caption"
+                                  onClick={()=>handleClose}>
+                                <Typography variant="caption" gutterBottom>POLÍTICAS DE PRIVACIDADE DA PLATAFORMA</Typography>
+                              </Link>
+                              </span>
+                              </div>  
   
-    <Checkbox onChange={handlePasswordConfirmChange}/>
-    
-      
-      <div><span><Typography variant="body2" gutterBottom>LI E ACEITO OS </Typography></span>
-        
-      <Link
-          component="button"
-          variant="caption"
-          onClick={()=>handleClose}>
-         <Typography variant="body2" gutterBottom>TERMOS E CONDIÇÕES DE USO </Typography>
-      </Link>
-      
-      <span> E </span>
-      <Link
-          component="button"
-          variant="caption"
-          onClick={()=>handleClose}>
-        <Typography variant="body2" gutterBottom>POLÍTICAS DE PRIVACIDADE DA PLATAFORMA</Typography>
-      </Link>
-      </div>
-      
-    
-  </>
-
-
+  
   return (
     <div>      
         <DialogTitle className={classes.myDialogTitle}> Crie uma conta</DialogTitle>        
         <DialogContent>
+          <FormBase dataForm={dadosFormulario}
+                    dataFormErrors={errosFormulario}
+                    isValidFormFunction={isValidForm}
+                    handleChangeFunction={handleChange}>
           
-          <Grid container spacing={2} justifyContent="center"  alignItems="center">                
-                
-                <Grid item xs={12}>
-                    </Grid>
-                <Grid item xs={12}>
-                
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    label="Nome"                    
-                    value={name}
-                    onChange={handleNome}                      
-                    required
-                    error= {formValidated && !isValidName()}
-                    helperText={formValidated && !isValidName()?"Erro":""}
 
-                />
-                </Grid>
-              <Grid item xs={12}>
-                
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    label="Email"
-                    required
-                    value={email}
-                    onChange={handleEmailChange}                    
-                />
-                </Grid>
-                <Grid item xs={12}>
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    type="password"
+                  <TextFieldForm 
+                    name="name" 
+                    label='Nome'
+                    requiredFill/>
+                 <TextFieldForm 
+                      name="email" 
+                      label="Email"
+                      requiredFill/>
+
+                  <PasswordFieldForm
+                    name="password" 
                     label="Password"
-                    required
-                    value={password}
-                    onChange={handlePasswordChange}
-                />
-                </Grid>
-                <Grid item xs={12}>
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    type="password"
-                    label="Password Confirm"
-                    required
-                    value={passwordConfirm}
-                    onChange={handlePasswordConfirmChange}
-                />
-                </Grid>
-                <Grid container direction="row" xs={12}>
-                                      
-                    {termAcceptComponent}                    
-                    
-                </Grid>
-                
+                    requiredFill
+                  />
+                  <TextFieldForm 
+                      name="passwordConfirmed" 
+                      label="Password Confirm"
+                      requiredFill/>
 
-                <Grid item xs={12}>
-                <Button variant="contained" color="primary" fullWidth onClick={handleNewAccount}>
-                    Cadastrar
-                </Button>                
-                </Grid>
-                <Grid item>
-                    Já tenho uma conta. <Link
-                                  component="button"
-                                  variant="body2"
-                                  onClick={()=>dispatch(openDialogLogin())}>
-                                Realizar o meu Login!
-                              </Link>
-                </Grid>
-            </Grid>            
-          
+                  <CheckBoxFieldForm 
+                      name="passwordConfirmed" 
+                      label="Password Confirm"
+                      componentDescription={termAcceptComponent}
+                      requiredFill/>
+
+                  <ButtonForm
+                    label="Cadastrar"
+                  />
+                    
+                      
+          </FormBase>
         </DialogContent>
         <DialogActions>
         
