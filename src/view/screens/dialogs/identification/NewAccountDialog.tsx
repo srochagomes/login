@@ -113,18 +113,13 @@ export default function NewAccountDialog() {
     setErrosFormulario({});
   };
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
 
 
   const handleNewAccount = () => {        
     
     
     
-    if (validForm()){
+    if (true){
       let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
       if(!data){
         throw new Error('Key encript should be informed.');
@@ -177,59 +172,7 @@ export default function NewAccountDialog() {
   };
 
   
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    
-    const { name, value } = event.target;    
-    const newData = 
-    {  ...dadosFormulario,
-      [name]: value}  
-    
-    setDadosFormulario(newData);
-  };
   
-
-  const isValidForm = () => {
-    return Object.keys(errosFormulario).length === 0;
-  }
-
-  const validForm = () => {    
-    
-    let errorData = {}
-
-
-
-    const { name, email } = dadosFormulario;
-    
-
-    // Validar campo obrigatório do nome
-    if (!name.trim()) {      
-      errorData = {
-        ...errorData,
-        name: 'Campo obrigatório'
-      }
-    }
-
-    // Validar campo obrigatório do e-mail
-    if (!email.trim()) {
-      errorData = {
-        ...errorData,
-        email: 'Campo obrigatório'
-      }
-      
-      
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      errorData = {
-        ...errorData,
-        email: 'E-mail inválido'
-      }
-    }
-
-    setErrosFormulario(errorData);    
-    console.log("Valor erro ", Object.keys(errosFormulario))
-    console.log("Valor erro tamanho", Object.keys(errosFormulario).length)
-    console.log("função ", isValidForm())
-    return Object.keys(errorData).length === 0 ;
-  };
 
 
   
@@ -240,7 +183,8 @@ export default function NewAccountDialog() {
                                 <Typography variant="caption" gutterBottom>TERMOS E CONDIÇÕES DE USO </Typography>
                               </Link>
                               
-                              <Typography variant="caption" gutterBottom> E </Typography>
+                              
+                              <span><Typography variant="caption" gutterBottom> E </Typography></span>
                               <Link          
                                   variant="caption"
                                   onClick={()=>handleClose}>
@@ -253,12 +197,9 @@ export default function NewAccountDialog() {
   return (
     <div>      
         <DialogTitle className={classes.myDialogTitle}> Crie uma conta</DialogTitle>        
-        <DialogContent>
-          <FormBase dataForm={dadosFormulario}
-                    dataFormErrors={errosFormulario}
-                    isValidFormFunction={isValidForm}
-                    handleChangeFunction={handleChange}>
+        <DialogContent sx={{ marginTop: '20px' }}>
           
+          <FormBase isValidFormFunction={handleNewAccount}>          
 
                   <TextFieldForm 
                     name="name" 
@@ -267,6 +208,7 @@ export default function NewAccountDialog() {
                  <TextFieldForm 
                       name="email" 
                       label="Email"
+                      emailValid
                       requiredFill/>
 
                   <PasswordFieldForm
@@ -275,20 +217,31 @@ export default function NewAccountDialog() {
                     requiredFill
                   />
                   <TextFieldForm 
+                      type="password"
                       name="passwordConfirmed" 
                       label="Password Confirm"
+                      compareValueWith={{name:'password', label:'Password'}}
                       requiredFill/>
 
                   <CheckBoxFieldForm 
-                      name="passwordConfirmed" 
-                      label="Password Confirm"
+                      name="termAccept" 
+                      label="Termo"
                       componentDescription={termAcceptComponent}
-                      requiredFill/>
+                      requiredTrue/>
 
                   <ButtonForm
+                    name="btn" 
                     label="Cadastrar"
                   />
                     
+                    <CustomAreaForm name="customArea" >
+                      <span><Typography variant="caption"  gutterBottom>Já tenho uma conta. </Typography></span> <span><Link
+                                        component="button"
+                                        variant="body2"
+                                        onClick={()=>dispatch(openDialogLogin())}>
+                                      <Typography variant="caption"  gutterBottom> Realizar o meu Login! </Typography>
+                                    </Link></span>
+                    </CustomAreaForm>
                       
           </FormBase>
         </DialogContent>
