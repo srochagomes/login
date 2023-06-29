@@ -21,9 +21,6 @@ export default function PrincipalHome() {
     const { pathname, query } = router;
     let { requiredUser } = query;    
     
-
-    console.log("Principal Home");
-    
     const dispatch = useDispatch();
 
     useEffect(() => {

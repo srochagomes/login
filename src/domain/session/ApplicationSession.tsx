@@ -1,6 +1,7 @@
 import accessTokenRepository from "@/infra/repository/cookies/AccessTokenRepository"
 import identity from "@/infra/api/server/IdentityConnect"
 import { HttpStatusCode } from "axios";
+import jwt, { JwtPayload } from 'jsonwebtoken'
 
 
 const writeTokenData = (authAPIData: IAPIReturn): void =>{    
@@ -16,9 +17,18 @@ const writeTokenData = (authAPIData: IAPIReturn): void =>{
 
 const applicationSession = {
 
-    isActive(){
+    getData(){
 
-      
+      let access_token_id = process.env.NEXT_PUBLIC_ACCESS_TOKEN_APP;          
+      if (!access_token_id){
+        throw new Error('Access token should be informed.');
+      }
+      let token:string|null = accessTokenRepository.get(access_token_id);
+      if (token){
+        let decodedIdTokenData: JwtPayload = jwt.decode(token) as JwtPayload;  
+        return decodedIdTokenData;
+      }
+      return null;    
         
     },
     register(){

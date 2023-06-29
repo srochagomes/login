@@ -6,13 +6,15 @@ import React from "react";
 
 export default function TextFieldForm( props:any){
 
-    const {requiredFill, emailValid, compareValueWith} = props;
+    const {requiredFill, emailValid, compareValueWith, fullWidth} = props;
+
+    
 
     props.validParent[props.name as keyof typeof props.validParent] = ()=>{
         
         props.registerError(props.name, null);              
         let value = props.dataForm[props.name as keyof typeof props.dataForm];
-        console.log("valores ",props.name,value);
+        
                
         if ((requiredFill && (!value || !value.trim()))) {      
             props.registerError(props.name, 'Campo obrigatório');            
@@ -43,14 +45,15 @@ export default function TextFieldForm( props:any){
   
 
     return (<>
-        <Grid item xs={12}>                
-            <TextField
-                        fullWidth
+        <Grid item xs={12} >                
+            <TextField 
+                        sx={props.sx}
+                        fullWidth={fullWidth}
                         variant="outlined"
                         name={props.name}
                         type={props.type == null ? 'text':props.type}
                         label={props.label}
-                        value={props.dataForm[props.name as keyof typeof props.dataForm]}
+                        value={props.content(props.name)}
                         onChange={props.handleChange}                      
                         required={(props.requiredFill)?true:false}
                         error= {props.hasError(props.name)}

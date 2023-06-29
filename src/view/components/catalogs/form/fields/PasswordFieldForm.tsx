@@ -1,6 +1,5 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
-import { randomUUID } from "crypto";
 import { useState } from "react";
 
 
@@ -59,7 +58,7 @@ export default function PasswordFieldForm( props:any){
                       
                       label={props.label}
                       name={props.name}
-                      value={props.dataForm[props.name as keyof typeof props.dataForm]}
+                      value={props.content(props.name)}
                       onChange={props.handleChange}                      
                       required={(props.requiredFill)?true:false}
                       error= {props.hasError(props.name)}                      

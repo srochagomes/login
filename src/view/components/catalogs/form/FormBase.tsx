@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 interface FormProps {    
     children?: React.ReactNode;
     styleSheet?: StyleSheet;
-    isValidFormFunction: ()=>void;
+    applyOnValidForm: (data:any)=>void;
 
   }
   
@@ -17,6 +17,12 @@ export default function FormBase(props: FormProps){
       
       let errors = {}
       let validParent = {}
+
+      React.useEffect(() => {
+        setDataFormErrors(dataFormErrors);    
+        
+      }, [dataFormErrors]);
+      
     
       const registerError = (nameField:string,valueData:string) => {
           const newData =
@@ -29,8 +35,6 @@ export default function FormBase(props: FormProps){
 
       const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
           const { name, value } = event.target;  
-          console.log("click ",name, value);
-          console.log("event ",event.target)
           let newData =
           {  ...dataForm,
               [name]: value}  
@@ -38,6 +42,12 @@ export default function FormBase(props: FormProps){
           setDataForm(newData);
       };
 
+      
+
+      const content = (nameField:string):string => {
+        return dataForm[nameField as keyof typeof dataForm] != null
+              ? dataForm[nameField as keyof typeof dataForm] :'';
+      }
             
       const hasError = (nameField:string):boolean => {
           return dataFormErrors[nameField as keyof typeof dataFormErrors] != null
@@ -50,12 +60,16 @@ export default function FormBase(props: FormProps){
       
       const validForm = () => {  
           const entries = Object.entries<() => boolean>(validParent);        
-          entries.filter(([key, valueFunction]) => !valueFunction());
-          setDataFormErrors(errors);        
+          const errorsValid = entries.filter(([key, valueFunction]) => !valueFunction());
+          setDataFormErrors(errors);   
+          if (errorsValid.length===0){
+            props.applyOnValidForm(dataForm)     
+          }
+          
       };
 
 
-      const propsChanged = {dataForm, dataFormErrors, validParent, validForm, hasError, registerError, showError, handleChange, ...props}
+      const propsChanged = {dataForm,  dataFormErrors, content, validParent, validForm, hasError, registerError, showError, handleChange, ...props}
       
 
       const modifiedChildren = React.Children.map(children, (child) => {
@@ -66,7 +80,7 @@ export default function FormBase(props: FormProps){
       });
 
       return (
-          <Grid container spacing={2} justifyContent="center"  alignItems="center" >                
+          <Grid container spacing={2} justifyContent="center"  alignItems="center" >
               {modifiedChildren}
           </Grid>            
           );

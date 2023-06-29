@@ -8,7 +8,6 @@ export default function CustomAreaForm( props:any){
 
     
     props.validParent[props.name as keyof typeof props.validParent] = ()=>{
-        console.log("log CustomAreaForm field",props.validParent)  
         return true;
     }
 

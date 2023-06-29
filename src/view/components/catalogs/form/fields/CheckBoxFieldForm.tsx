@@ -1,4 +1,4 @@
-import { Checkbox, FormHelperText, Grid, TextField } from "@mui/material";
+import { Checkbox, FormHelperText, Grid } from "@mui/material";
 import React from "react";
 
 
@@ -9,16 +9,17 @@ export default function CheckBoxFieldForm( props:any){
 
     const {requiredTrue} = props;
 
-
+    React.useEffect(() => {
+        setChecked(checked);    
+        
+      }, [checked]);
     
     props.validParent[props.name as keyof typeof props.validParent] = ()=>{
         props.registerError(props.name, null);              
-        let value = props.dataForm[props.name as keyof typeof props.dataForm];
+        let value = props.dataForm[props.name as keyof typeof props.dataForm];        
         
-        console.log("valores ",props.name,value);
-        console.log("objeto ",props.dataForm);
         if ((requiredTrue && (!value || value!='true'))) {      
-            props.registerError(props.name, 'Campo obrigatório');            
+            props.registerError(props.name, 'É obrigatória a selecção');            
             return false
         }
         
@@ -43,7 +44,7 @@ export default function CheckBoxFieldForm( props:any){
             <Grid item xs={1}>
                 <Checkbox 
                 name={props.name}                    
-                value={props.dataForm[props.name as keyof typeof props.dataForm]}
+                value={props.content(props.name)}
                 checked={checked}
                 onChange={handleChangeChecked}  />                
             </Grid>

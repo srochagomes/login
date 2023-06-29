@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Alert from '@mui/material/Alert';
@@ -7,18 +8,28 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { makeStyles } from '@material-ui/core';
 import Link from '@mui/material/Link';
 
+import { encryptData } from '@/util/CryptoValue';
 
+import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
+import userSession from '@/domain/session/UserSession';
 import { HttpStatusCode } from 'axios';
-import { Box, Grid, Typography } from '@mui/material';
+import { FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material';
 
 
 import { useDispatch } from 'react-redux';
 
 import { closeDialogLogin, openDialogLogin} from '@/store/reducers/dialogs/LoginState';
 import account from '@/domain/account/Account';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import FormBase from '@/view/components/catalogs/form/FormBase';
 import TextFieldForm from '@/view/components/catalogs/form/fields/TextFielForm';
+import PasswordFieldForm from '@/view/components/catalogs/form/fields/PasswordFieldForm';
 import CheckBoxFieldForm from '@/view/components/catalogs/form/fields/CheckBoxFieldForm';
 import ButtonForm from '@/view/components/catalogs/form/button/ButtonForm';
 import CustomAreaForm from '@/view/components/catalogs/form/custom/CustomAreaForm';
@@ -69,16 +80,23 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function NewAccountDialog() {
+export default function ChangePasswordDialog() {
   const classes = useStyles();  
   
   
-  const [messageNewAccount, setMessageNewAccount] = React.useState('');
-  const [accountCreateSuccess, setAccountCreateSuccess] = React.useState(false);
-  const [emailSended, setEmailSended] = React.useState('');
+  const [messageLogin, setMessageLogin] = React.useState('');
   const dispatch = useDispatch();
+  
 
-  const handleNewAccount = (dataForm:any) => {   
+  
+
+
+
+
+
+  const handleNewAccount = (dataForm:any) => {        
+    
+    
     
     if (true){
       let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
@@ -91,7 +109,7 @@ export default function NewAccountDialog() {
         throw new Error('Application not identified, pleas, refresh the application.');
       }
       
-      
+      console.log("Dados aplicacao", applicationData) ;
       let newAccount : INewAccount = {
         application: applicationData.clientId,
         name: dataForm.name,
@@ -99,22 +117,19 @@ export default function NewAccountDialog() {
         email: dataForm.email,
         termAccept: dataForm.termAccept
       }
-      
-      
+      console.log("Dados formulario", newAccount) ;
       account.create(newAccount)
       .then((body)=>{            
-        if (body.status !== HttpStatusCode.Created && body.status !== HttpStatusCode.Ok){
+        if (body.status !== HttpStatusCode.Ok){
           if (body.status == HttpStatusCode.Unauthorized) 
-            setMessageNewAccount('Aplicação não pode criar uma nova conta!');
+            setMessageLogin('Aplicação não pode criar uma nova conta!');
           else if (body.status == HttpStatusCode.Forbidden) 
-            setMessageNewAccount('Aplicação não pode criar uma nova conta!');
-          else {            
-            setMessageNewAccount(body?.data?.message);            
-          }
-          
+            setMessageLogin('Aplicação não pode criar uma nova conta!');
+          else 
+            setMessageLogin(body?.data?.description);
         }else{             
-          setEmailSended(dataForm.email);
-          setAccountCreateSuccess(true);          
+          //dispatch(verifyUserLogged()); validar fluxo
+          handleClose();
         }
       });    
 
@@ -153,34 +168,29 @@ export default function NewAccountDialog() {
     <div>      
         <DialogTitle className={classes.myDialogTitle}> Crie uma conta</DialogTitle>        
         <DialogContent sx={{ marginTop: '20px' }}>
-          {accountCreateSuccess ?
-            (<Grid container spacing={2}  justifyContent="center"  alignItems="center" direction="column">                
-              <div>
-              <div>
-                <span><Typography variant="h6"  gutterBottom>Solicitação de criação de conta </Typography></span> 
-              </div>
-              <div>
-                <span><Typography variant="h6"  gutterBottom>realizada com sucesso!. </Typography></span> 
-              </div>
-              
-              <span><Typography variant="h6"  gutterBottom>Um e-mail será enviado para {emailSended}. </Typography></span> 
-              </div> 
-            </Grid>
-          )
-          :
-          (<FormBase applyOnValidForm={handleNewAccount}>          
+          
+          <FormBase applyOnValidForm={handleNewAccount}>          
 
                   <TextFieldForm 
-                    sx={{ marginTop: '5px' }}
-                    fullWidth
                     name="name" 
                     label='Nome'
                     requiredFill/>
                  <TextFieldForm 
-                      fullWidth
                       name="email" 
                       label="Email"
                       emailValid
+                      requiredFill/>
+
+                  <PasswordFieldForm
+                    name="password" 
+                    label="Password"
+                    requiredFill
+                  />
+                  <TextFieldForm 
+                      type="password"
+                      name="passwordConfirmed" 
+                      label="Password Confirm"
+                      compareValueWith={{name:'password', label:'Password'}}
                       requiredFill/>
 
                   <CheckBoxFieldForm 
@@ -203,24 +213,16 @@ export default function NewAccountDialog() {
                                     </Link></span>
                     </CustomAreaForm>
                       
-          </FormBase>)}
+          </FormBase>
         </DialogContent>
         <DialogActions>
         
-        
-                  
-          {messageNewAccount && (
-          <Alert    severity="error" color="error" sx={{ width: '100%', textAlign: 'left' }} >{messageNewAccount}</Alert>)}
-          {accountCreateSuccess ?
-              <Button id="closeNewAccountbtn" variant="contained" color="primary"  onClick={handleClose}>
-                OK
-              </Button>  :
-
-              <Button onClick={handleClose} color="primary">
-                          Cancel
-              </Button>
-          }
           
+          {messageLogin && (
+          <Alert    severity="error" color="error" sx={{ width: '100%', textAlign: 'left' }} >{messageLogin}</Alert>)}
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
         </DialogActions>
     </div>
   );

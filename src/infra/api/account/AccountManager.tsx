@@ -15,8 +15,7 @@ const accountManager = {
         let api = connectServiceHttp.toAPI.asApp();
         
         return await api.post<IAPIReturn>(apiAddress, newAccount, headerJson)
-        .then((response) => {          
-            console.log("Dados "+response.data)                 
+        .then((response) => {                      
             let dataReturn: IAPIReturn =  {
                 status:  response.status,
                 statusText:   response.statusText,
