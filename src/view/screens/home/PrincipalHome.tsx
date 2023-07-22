@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import applicationSession from '@/domain/session/ApplicationSession';
 import { useState, useEffect } from 'react';
 import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
-import { openDialogLogin } from '@/store/reducers/dialogs/LoginState';
+import { openDialogLogin, openDialogEmailAccountConfirmed } from '@/store/reducers/dialogs/LoginState';
 const inter = Inter({ subsets: ['latin'] })
 
 
@@ -19,7 +19,7 @@ export default function PrincipalHome() {
     const loginDialog = useSelector((state:any) => state.loginDialogState);
     const router = useRouter();
     const { pathname, query } = router;
-    let { requiredUser } = query;    
+    let { requiredUser, emailConfirmed } = query;    
     
     const dispatch = useDispatch();
 
@@ -35,8 +35,14 @@ export default function PrincipalHome() {
           pathname,
           query
         });
-      };      
-    }, [requiredUser])
+      };
+      if(emailConfirmed){
+           
+        dispatch(openDialogEmailAccountConfirmed({key:query.emailConfirmed})); 
+        delete query.emailConfirmed;
+      }
+            
+    }, [requiredUser, emailConfirmed])
 
 
 

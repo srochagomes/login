@@ -16,12 +16,20 @@ const loginDialogSlice = createSlice({
       return { open: true, 
                screenType: IndentificationScreenType.NEWACCOUNT};
     },
+    openDialogEmailAccountConfirmed: (state, data) => {
+      const {key} = data.payload;
+      return { open: true, 
+        
+        screenType: IndentificationScreenType.CONFIRMACCOUNT,
+        key
+      };
+    },
     closeDialogLogin: (state) =>  {
         return { open: false};
     },
   }
 });
 
-export const { openDialogLogin, closeDialogLogin, openDialogNewAccount} = loginDialogSlice.actions;
+export const { openDialogLogin, closeDialogLogin, openDialogNewAccount, openDialogEmailAccountConfirmed} = loginDialogSlice.actions;
 
 export default loginDialogSlice.reducer;

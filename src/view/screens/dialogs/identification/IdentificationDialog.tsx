@@ -7,17 +7,20 @@ import { closeDialogLogin} from '@/store/reducers/dialogs/LoginState';
 
 import LoginDialog from './LogingDialog';
 import NewAccountDialog from './NewAccountDialog';
+import EmailAccountConfirmedDialog from './EmailAccountConfirmedDialog';
 
 
 export enum IndentificationScreenType {
     LOGIN,
-    NEWACCOUNT
+    NEWACCOUNT,
+    CONFIRMACCOUNT
   }
 
 
 export default function IdentificationDialog() {
   
-  const loginDialog = useSelector((state:any) => state.loginDialogState);   
+  const loginDialog = useSelector((state:any) => state.loginDialogState);  
+
   
   const [open, setOpen] = React.useState(false);  
   const [screenTypeState, setScreenTypeState] = React.useState(IndentificationScreenType.LOGIN); 
@@ -26,6 +29,7 @@ export default function IdentificationDialog() {
   React.useEffect(() => {
     setOpen(loginDialog.open);
     setScreenTypeState(loginDialog.screenType)
+    console.log('Valor state',loginDialog);
     
   }, [loginDialog.open,loginDialog.screenType]);
   
@@ -38,7 +42,9 @@ export default function IdentificationDialog() {
                     <LoginDialog />
                     :(screenTypeState === IndentificationScreenType.NEWACCOUNT?
                     <NewAccountDialog />
-                    :<></>))
+                    :(screenTypeState === IndentificationScreenType.CONFIRMACCOUNT?
+                      <EmailAccountConfirmedDialog keyConfirmedEmail={loginDialog.key}/>
+                    :<></>)))
 
   return (
     <div>      

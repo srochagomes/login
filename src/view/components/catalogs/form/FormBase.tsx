@@ -80,7 +80,7 @@ export default function FormBase(props: FormProps){
       });
 
       return (
-          <Grid container spacing={2} justifyContent="center"  alignItems="center" >
+          <Grid container spacing={2}  justifyContent="center"  alignItems="center" >
               {modifiedChildren}
           </Grid>            
           );

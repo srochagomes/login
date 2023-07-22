@@ -55,7 +55,7 @@ export default function PasswordFieldForm( props:any){
                         </InputAdornment>
                       }
                       
-                      
+                      sx={props.sx}
                       label={props.label}
                       name={props.name}
                       value={props.content(props.name)}
