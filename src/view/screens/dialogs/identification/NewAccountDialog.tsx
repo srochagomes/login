@@ -80,7 +80,7 @@ export default function NewAccountDialog() {
 
   const handleNewAccount = (dataForm:any) => {   
     
-    if (true){
+    
       let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
       if(!data){
         throw new Error('Key encript should be informed.');
@@ -117,10 +117,6 @@ export default function NewAccountDialog() {
           setAccountCreateSuccess(true);          
         }
       });    
-
-    }
-    
-    
       
   };
 

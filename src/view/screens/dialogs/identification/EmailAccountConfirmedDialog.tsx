@@ -24,6 +24,9 @@ import ButtonForm from '@/view/components/catalogs/form/button/ButtonForm';
 import CustomAreaForm from '@/view/components/catalogs/form/custom/CustomAreaForm';
 import applicationSession from '@/domain/session/ApplicationSession';
 import PasswordFieldForm from '@/view/components/catalogs/form/fields/PasswordFieldForm';
+import { encryptData } from '@/util/CryptoValue';
+import userSession from '@/domain/session/UserSession';
+import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 
 const useStyles = makeStyles((theme) => ({
   myDialogTitle: {
@@ -76,58 +79,65 @@ export default function EmailAccountConfirmedDialog(props:EmailAccountConfirmePr
   const classes = useStyles();  
   const {keyConfirmedEmail}  =  props;
   const [messageNewAccount, setMessageNewAccount] = React.useState('');
-  const [accountCreateSuccess, setAccountCreateSuccess] = React.useState(false);
-  const [emailSended, setEmailSended] = React.useState('');
+  const [accountCreateSuccess, setAccountCreateSuccess] = React.useState(false);  
   const dispatch = useDispatch();
 
 
   console.log('Valor key 2',keyConfirmedEmail);
   
 
-  const handleNewAccount = (dataForm:any) => {   
-    
-    if (true){
-      let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
-      if(!data){
-        throw new Error('Key encript should be informed.');
-      }
-      let applicationData = applicationSession.getData();
+  const handleAccessConfirm = (dataForm:any) => {     
       
-      if(!applicationData){
-        throw new Error('Application not identified, pleas, refresh the application.');
+      
+      let accessConfirm : IAccessConfirm = {
+        key: keyConfirmedEmail,
+        value: dataForm.password
       }
       
       
-      let newAccount : INewAccount = {
-        application: applicationData.clientId,
-        name: dataForm.name,
-        username: dataForm.email,
-        email: dataForm.email,
-        termAccept: dataForm.termAccept
-      }
-      
-      
-      account.create(newAccount)
+      account.confirmAccess(accessConfirm)
       .then((body)=>{            
-        if (body.status !== HttpStatusCode.Created && body.status !== HttpStatusCode.Ok){
+        if (body.status !== HttpStatusCode.Ok){
           if (body.status == HttpStatusCode.Unauthorized) 
-            setMessageNewAccount('Aplicação não pode criar uma nova conta!');
+            setMessageNewAccount('Aplicação não pode confirmar o acesso!');
           else if (body.status == HttpStatusCode.Forbidden) 
-            setMessageNewAccount('Aplicação não pode criar uma nova conta!');
+            setMessageNewAccount('Aplicação não pode confirmar o acesso!');
           else {            
             setMessageNewAccount(body?.data?.message);            
           }
           
-        }else{             
-          setEmailSended(dataForm.email);
-          setAccountCreateSuccess(true);          
+        }else{
+          
+          let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
+          if(!data){
+            throw new Error('Key encript should be informed.');
+          }
+
+          let user : IUserAuth = {
+            username: body?.data?.userLogin,
+            password: encryptData(dataForm.password, data)
+          }
+
+          
+      
+          userSession.register(user)
+                .then((body)=>{            
+                  if (body.status !== HttpStatusCode.Ok){
+                     if (body.status == HttpStatusCode.Unauthorized) 
+                     setMessageNewAccount('Usuário e/ou senha invalido!');
+                     else if (body.status == HttpStatusCode.Forbidden) 
+                     setMessageNewAccount('Usuário não pode acessar!');
+                     else 
+                     setMessageNewAccount(body?.data?.description);
+                  }else{
+                    dispatch(verifyUserLogged());
+                    handleClose();
+                  }
+                });  
+          
+          
         }
       });    
-
-    }
-    
-    
-      
   };
 
 
@@ -144,7 +154,7 @@ export default function EmailAccountConfirmedDialog(props:EmailAccountConfirmePr
     <div>      
         <DialogTitle className={classes.myDialogTitle}> Cadastre sua senha</DialogTitle>        
         <DialogContent sx={{ marginTop: '30px' }}>
-          <FormBase applyOnValidForm={handleNewAccount}>          
+          <FormBase applyOnValidForm={handleAccessConfirm}>          
 
                   <PasswordFieldForm 
                     sx={{ marginTop: '5px' }}
@@ -152,11 +162,12 @@ export default function EmailAccountConfirmedDialog(props:EmailAccountConfirmePr
                     name="password" 
                     label='Senha'
                     requiredFill/>
-                 <PasswordFieldForm 
+                 <TextFieldForm 
+                      type="password"
+                      name="passwordConfirmed" 
+                      label="Password Confirm"
                       fullWidth
-                      name="passwordConfirm" 
-                      label="Confirme sua senha"
-                      
+                      compareValueWith={{name:'password', label:'Senha'}}
                       requiredFill/>
 
                   <ButtonForm

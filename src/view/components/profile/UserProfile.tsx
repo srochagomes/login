@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 const UserProfile = () => {
     const userLogged = useSelector((state:any) => state.userLoggedState);
 
-    let userName = userLogged.logged?userLogged.preferred_username : 'Anonimous';
+    let userName = userLogged.logged?userLogged.given_name : 'Anonimous';
 
 
     return (
@@ -19,3 +19,5 @@ const UserProfile = () => {
   };
   
   export default UserProfile;
+
+  
