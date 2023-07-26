@@ -94,7 +94,7 @@ export default function ChangePasswordDialog() {
 
 
 
-  const handleNewAccount = (dataForm:any) => {        
+  const handleChangePassword = (dataForm:any) => {        
     
     
     
@@ -169,7 +169,7 @@ export default function ChangePasswordDialog() {
         <DialogTitle className={classes.myDialogTitle}> Crie uma conta</DialogTitle>        
         <DialogContent sx={{ marginTop: '20px' }}>
           
-          <FormBase applyOnValidForm={handleNewAccount}>          
+          <FormBase applyOnValidForm={handleChangePassword}>          
 
                   <TextFieldForm 
                     name="name" 

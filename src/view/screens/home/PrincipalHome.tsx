@@ -40,6 +40,10 @@ export default function PrincipalHome() {
            
         dispatch(openDialogEmailAccountConfirmed({key:query.emailConfirmed})); 
         delete query.emailConfirmed;
+        router.replace({
+          pathname,
+          query
+        });
       }
             
     }, [requiredUser, emailConfirmed])
