@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useRouter } from 'next/router';
+
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -76,7 +78,25 @@ export default function LoginDialog() {
   const [password, setPassword] = React.useState('');
   const [messageLogin, setMessageLogin] = React.useState('');
   const dispatch = useDispatch();
+
+  //NEXT_PUBLIC_LOGIN_SOCIAL_START= 'http://poc-eselwer.sytes.net:9776/realms/eselwer/protocol/openid-connect/auth?client_id={{clientId}}&redirect_uri={{urlRedirect}}&response_type=code&scope=openid&kc_idp_hint={{identityProvider}}'  
+
+  const router = useRouter();
+
+  let urlLoginSocial = process.env.NEXT_PUBLIC_LOGIN_SOCIAL_START
+  let clientId = process.env.NEXT_PUBLIC_APP_CLIENT_ID
   
+  if (!urlLoginSocial){
+    throw new Error("NEXT_PUBLIC_LOGIN_SOCIAL_START not found to use");
+  }
+
+  if (!clientId){
+    throw new Error("NEXT_PUBLIC_APP_CLIENT_ID not found to use");
+  }
+
+
+  urlLoginSocial = urlLoginSocial.replace(/{{clientId}}/g, clientId).replace(/{{urlRedirect}}/g, window.location.protocol+'//'+window.location.host+'/login-social')
+
 
   const clearData = () => {
     setEmail('');
@@ -133,9 +153,15 @@ export default function LoginDialog() {
 
 
   const handleLoginSocial = (provider:string) => {
-    // TODO: Implement login logic with social provider
+    
+    let urlLoginSocialIdentityProvider = urlLoginSocial?.replace(/{{identityProvider}}/g, provider)
 
-    handleClose();
+    if (urlLoginSocialIdentityProvider){
+      router.push(new URL(urlLoginSocialIdentityProvider));      
+      handleClose();
+    }
+
+    
   };
 
   return (
@@ -190,7 +216,7 @@ export default function LoginDialog() {
                         <Button
                             className={`${classes.socialButton} ${classes.googleButton}`}
                             startIcon={<Google/>}
-                            onClick={() => handleLoginSocial('Google')}>
+                            onClick={() => handleLoginSocial('google')}>
                             Google
                         </Button>
                     
@@ -226,3 +252,6 @@ export default function LoginDialog() {
     </div>
   );
 }
+
+
+

@@ -2,10 +2,7 @@
 import { GetServerSidePropsContext } from 'next';
 import accessManagerAPI from '@/infra/api/auth/AccessManager';
 
-import refreshTokenRepository from '@/infra/repository/cookies/RefreshTokenRepository';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import accessTokenRepository from '@/infra/repository/cookies/AccessTokenRepository';
-import { decryptData } from '@/util/CryptoValue';
 import refreshTokenStoreService from '@/domain/auth/RefreshTokenStoreService';
 import { HttpStatusCode } from 'axios';
 
@@ -22,10 +19,10 @@ const controllers = {
   async refresh(req: NextApiRequest, res: NextApiResponse<ICredentialData | IErrorMessage>) {
     
 
-    let client_id = process.env.APP_CLIENT_ID;
+    let client_id = process.env.NEXT_PUBLIC_APP_CLIENT_ID;
     let client_secret = process.env.APP_CLIENT_SECRET;
     if (!client_id){
-      throw new Error("APP_CLIENT_ID should be informed");
+      throw new Error("NEXT_PUBLIC_APP_CLIENT_ID should be informed");
     }
     if (!client_secret){
       throw new Error("APP_CLIENT_SECRET should be informed");

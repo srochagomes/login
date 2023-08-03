@@ -108,7 +108,7 @@ const accessManager = {
 
         if (accessConfirmData.key){
             apiAddress = apiAddress.replace(/{{key}}/g, accessConfirmData.key)
-        }        
+        }
 
         let api = connectServiceHttp.toAPI.asApp()
 
@@ -116,6 +116,7 @@ const accessManager = {
             value : accessConfirmData.value
         }
 
+        
         return await api.put<IAPIReturn>(apiAddress,body,headerJson)
         .then((response) => {          
             console.log("Info",response);     
@@ -137,8 +138,6 @@ const accessManager = {
           });  
 
     }
-
-
 }
 
 export default accessManager;

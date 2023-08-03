@@ -13,7 +13,7 @@ type Data = {
 const controllers = {
   async login(req: NextApiRequest, res: NextApiResponse<ICredentialData | IErrorMessage>) {    
     
-    let client_id = process.env.APP_CLIENT_ID;
+    let client_id = process.env.NEXT_PUBLIC_APP_CLIENT_ID;
     let client_secret = process.env.APP_CLIENT_SECRET;
     if (!client_id){
       throw new Error('Client id not configured.');

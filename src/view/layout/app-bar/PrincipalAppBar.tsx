@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -8,9 +8,7 @@ import Slide from '@mui/material/Slide';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import LoginDialog from '@/view/screens/dialogs/identification/LogingDialog';
 import { useSelector, useDispatch } from 'react-redux';
-import { AccountCircle } from '@mui/icons-material';
 import { Box, Menu, MenuItem } from '@mui/material';
 import UserProfile from '@/view/components/profile/UserProfile';
 import userSession from '@/domain/session/UserSession';
@@ -18,7 +16,6 @@ import userSession from '@/domain/session/UserSession';
 import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 import { openDialogLogin} from '@/store/reducers/dialogs/LoginState';
 import { useRouter } from 'next/router';
-import { HttpStatusCode } from 'axios';
 import verifyRequiredLogin from '@/actions/VerifyRequireLogin';
 
 interface Props {
@@ -152,7 +149,7 @@ export default function PrincipalAppBar() {
             News
           </Typography>
           {logged ? 
-              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+              <Box sx={{ display: {  md: 'flex' } }}>
                 <IconButton
                   size="large"
                   edge="end"
