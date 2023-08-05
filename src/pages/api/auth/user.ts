@@ -10,30 +10,61 @@ type Data = {
   name: string
 }
 
+const createCredendials = (client_id:string, client_secret:string,  req: NextApiRequest): ICredentialAuth => {
+
+  //When flow is by code
+  if (req?.body?.code) {
+
+    return {
+      client_id,
+      client_secret,
+      ...req.body,
+      grant_type: "authorization_code",
+      scope: "roles email openid acr"  
+    }
+
+  }  
+
+  //When flow is by password
+  let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
+
+  if(!data){
+    throw new Error('Key encript should be informed.');
+  }
+  
+  let credential =  {
+    client_id,
+    client_secret,
+    ...req.body,
+    grant_type: "password",
+    scope: "roles email openid acr"  
+  };
+
+  credential.password = decryptData(credential.password, data);
+
+  return credential;
+}
+
 
 const controllers = {
   async login(req: NextApiRequest, res: NextApiResponse<ICredentialData | IErrorMessage>) {
     
 
-    let client_id = process.env.APP_CLIENT_ID;
+    let client_id = process.env.NEXT_PUBLIC_APP_CLIENT_ID;
     let client_secret = process.env.APP_CLIENT_SECRET;
     
-    let data = process.env.NEXT_PUBLIC_KEY_CRIPTO;
-
-    if(!data){
-      throw new Error('Key encript should be informed.');
+    if (!client_id){
+      throw new Error('Client ID should be informed.');
     }
 
-    let credential = {
-      client_id,
-      client_secret,
-      ...req.body,
-      grant_type: "password",
-      scope: "roles email openid acr"  
+    if (!client_secret){
+      throw new Error('Secret should be informed.');
     }
 
-    credential.password = decryptData(credential.password, data);
 
+    let credential = createCredendials(client_id, client_secret, req)
+    
+    
     let apiReturn : IAPIReturn = await accessManagerAPI.getCredentialAccess(credential);
     
     if (apiReturn?.data?.refresh_token){

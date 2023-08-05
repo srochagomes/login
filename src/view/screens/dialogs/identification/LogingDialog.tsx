@@ -24,6 +24,7 @@ import { IndentificationScreenType } from './IdentificationDialog';
 import { useDispatch } from 'react-redux';
 
 import { closeDialogLogin, openDialogNewAccount} from '@/store/reducers/dialogs/LoginState';
+import loginSocialRedirect from '@/util/LoginSocialRedirect';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -95,7 +96,7 @@ export default function LoginDialog() {
   }
 
 
-  urlLoginSocial = urlLoginSocial.replace(/{{clientId}}/g, clientId).replace(/{{urlRedirect}}/g, window.location.protocol+'//'+window.location.host+'/login-social')
+  urlLoginSocial = urlLoginSocial.replace(/{{clientId}}/g, clientId).replace(/{{urlRedirect}}/g, loginSocialRedirect.getUrl())
 
 
   const clearData = () => {
@@ -152,11 +153,12 @@ export default function LoginDialog() {
   };
 
 
-  const handleLoginSocial = (provider:string) => {
+  const handleLoginSocialStart = (provider:string) => {
     
     let urlLoginSocialIdentityProvider = urlLoginSocial?.replace(/{{identityProvider}}/g, provider)
 
     if (urlLoginSocialIdentityProvider){
+      console.log('url login social',urlLoginSocialIdentityProvider);
       router.push(new URL(urlLoginSocialIdentityProvider));      
       handleClose();
     }
@@ -216,7 +218,7 @@ export default function LoginDialog() {
                         <Button
                             className={`${classes.socialButton} ${classes.googleButton}`}
                             startIcon={<Google/>}
-                            onClick={() => handleLoginSocial('google')}>
+                            onClick={() => handleLoginSocialStart('google')}>
                             Google
                         </Button>
                     
@@ -224,7 +226,7 @@ export default function LoginDialog() {
                         <Button
                             className={`${classes.socialButton} ${classes.facebookButton}`}
                             startIcon={<Facebook/>}
-                            onClick={() => handleLoginSocial('Facebook')}>
+                            onClick={() => handleLoginSocialStart('Facebook')}>
                             Facebook
                         </Button>
                     
@@ -232,7 +234,7 @@ export default function LoginDialog() {
                         <Button
                             className={`${classes.socialButton} ${classes.linkedinButton}`}
                             startIcon={<LinkedIn/>}
-                            onClick={() => handleLoginSocial('linkedin')}>
+                            onClick={() => handleLoginSocialStart('linkedin')}>
                             LinkedIn
                         </Button>
                     
