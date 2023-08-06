@@ -80,13 +80,18 @@ export default function LoginDialog() {
   const [messageLogin, setMessageLogin] = React.useState('');
   const dispatch = useDispatch();
 
-  //NEXT_PUBLIC_LOGIN_SOCIAL_START= 'http://poc-eselwer.sytes.net:9776/realms/eselwer/protocol/openid-connect/auth?client_id={{clientId}}&redirect_uri={{urlRedirect}}&response_type=code&scope=openid&kc_idp_hint={{identityProvider}}'  
+  
 
   const router = useRouter();
 
+  let rootIDP = process.env.NEXT_PUBLIC_IDP_BASE_URL
   let urlLoginSocial = process.env.NEXT_PUBLIC_LOGIN_SOCIAL_START
   let clientId = process.env.NEXT_PUBLIC_APP_CLIENT_ID
   
+  if (!rootIDP){
+    throw new Error("NEXT_PUBLIC_IDP_BASE_URL not found to use");
+  }
+
   if (!urlLoginSocial){
     throw new Error("NEXT_PUBLIC_LOGIN_SOCIAL_START not found to use");
   }
@@ -96,8 +101,8 @@ export default function LoginDialog() {
   }
 
 
-  urlLoginSocial = urlLoginSocial.replace(/{{clientId}}/g, clientId).replace(/{{urlRedirect}}/g, loginSocialRedirect.getUrl())
-
+  urlLoginSocial = rootIDP+urlLoginSocial.replace(/{{clientId}}/g, clientId).replace(/{{urlRedirect}}/g, loginSocialRedirect.getUrl())
+  
 
   const clearData = () => {
     setEmail('');
@@ -157,12 +162,13 @@ export default function LoginDialog() {
     
     let urlLoginSocialIdentityProvider = urlLoginSocial?.replace(/{{identityProvider}}/g, provider)
 
+    console.log('url-login-social', urlLoginSocialIdentityProvider)
+
     if (urlLoginSocialIdentityProvider){
       console.log('url login social',urlLoginSocialIdentityProvider);
       router.push(new URL(urlLoginSocialIdentityProvider));      
       handleClose();
     }
-
     
   };
 
