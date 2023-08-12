@@ -26,7 +26,7 @@ const controllers = {
       client_id,
       client_secret,      
       grant_type: "client_credentials",
-      scope: "roles email openid acr"  
+      scope: "roles openid"  
     }
 
     let apiReturn : IAPIReturn = await accessManagerAPI.getCredentialAccess(credential);
