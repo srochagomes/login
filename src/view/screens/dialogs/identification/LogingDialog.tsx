@@ -7,8 +7,10 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Alert from '@mui/material/Alert';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Grid, makeStyles } from '@material-ui/core';
-import { Divider } from '@mui/material';
+
+import {makeStyles } from '@mui/styles';
+
+import { Divider, Grid} from '@mui/material';
 import { Facebook, Google, LinkedIn } from '@mui/icons-material';
 
 import Link from '@mui/material/Link';
@@ -19,7 +21,6 @@ import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 
 import userSession from '@/domain/session/UserSession';
 import { HttpStatusCode } from 'axios';
-import { IndentificationScreenType } from './IdentificationDialog';
 
 import { useDispatch } from 'react-redux';
 
@@ -27,7 +28,7 @@ import { closeDialogLogin, openDialogNewAccount} from '@/store/reducers/dialogs/
 import loginSocialRedirect from '@/util/LoginSocialRedirect';
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme:any) => ({
   myDialogTitle: {
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.background.default,        

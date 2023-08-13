@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import Grid from '@material-ui/core/Grid';
+import React from 'react';
 import PrincipalAppBar from '@/view/layout/app-bar/PrincipalAppBar';
 import PrincipalFooter from '@/view/layout/footer/PrincipalFooter';
-import { useSelector } from 'react-redux';
-import IdentificationDialog, { IndentificationScreenType } from '../screens/dialogs/identification/IdentificationDialog';
+import IdentificationDialog from '../screens/dialogs/identification/IdentificationDialog';
+import { Grid } from '@mui/material';
 
+    
 
 interface LinkProps {
     children?: any;
 }
+
 
 const PrincipalLayout = ({children}:LinkProps) => {     
     
@@ -25,4 +26,8 @@ const PrincipalLayout = ({children}:LinkProps) => {
     </>
 )};
 
+
+  
+
 export default PrincipalLayout;
+

@@ -17,6 +17,7 @@ import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 import { openDialogLogin} from '@/store/reducers/dialogs/LoginState';
 import { useRouter } from 'next/router';
 import verifyRequiredLogin from '@/actions/VerifyRequireLogin';
+import { useTranslation } from 'next-i18next';
 
 interface Props {
   /**
@@ -43,9 +44,12 @@ function HideOnScroll(props: Props) {
   );
 }
 
+
+
+
 export default function PrincipalAppBar() {
   
-  
+  const { t } = useTranslation();
   const router = useRouter();
   
   const userLogged = useSelector((state:any) => state.userLoggedState);
@@ -146,8 +150,9 @@ export default function PrincipalAppBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            News
+            News 
           </Typography>
+          <p>{t('common:welcome')}</p>          
           {logged ? 
               <Box sx={{ display: {  md: 'flex' } }}>
                 <IconButton
@@ -175,3 +180,5 @@ export default function PrincipalAppBar() {
     </>
   );
 }
+
+

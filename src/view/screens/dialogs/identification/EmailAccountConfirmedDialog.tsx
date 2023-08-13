@@ -4,31 +4,26 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Alert from '@mui/material/Alert';
 import DialogTitle from '@mui/material/DialogTitle';
-import { makeStyles } from '@material-ui/core';
-import Link from '@mui/material/Link';
 
 
 
 import { HttpStatusCode } from 'axios';
-import { Box, Grid, Typography } from '@mui/material';
+import {makeStyles } from '@mui/styles';
 
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { closeDialogLogin, openDialogLogin} from '@/store/reducers/dialogs/LoginState';
+import { closeDialogLogin} from '@/store/reducers/dialogs/LoginState';
 import account from '@/domain/account/Account';
 import FormBase from '@/view/components/catalogs/form/FormBase';
 import TextFieldForm from '@/view/components/catalogs/form/fields/TextFielForm';
-import CheckBoxFieldForm from '@/view/components/catalogs/form/fields/CheckBoxFieldForm';
 import ButtonForm from '@/view/components/catalogs/form/button/ButtonForm';
-import CustomAreaForm from '@/view/components/catalogs/form/custom/CustomAreaForm';
-import applicationSession from '@/domain/session/ApplicationSession';
 import PasswordFieldForm from '@/view/components/catalogs/form/fields/PasswordFieldForm';
 import { encryptData } from '@/util/CryptoValue';
 import userSession from '@/domain/session/UserSession';
 import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme:any) => ({
   myDialogTitle: {
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.background.default,        

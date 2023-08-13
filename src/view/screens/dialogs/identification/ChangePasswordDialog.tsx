@@ -1,32 +1,23 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Alert from '@mui/material/Alert';
 import DialogTitle from '@mui/material/DialogTitle';
-import { makeStyles } from '@material-ui/core';
+import {makeStyles } from '@mui/styles';
+
 import Link from '@mui/material/Link';
 
-import { encryptData } from '@/util/CryptoValue';
 
-import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
 
-import userSession from '@/domain/session/UserSession';
 import { HttpStatusCode } from 'axios';
-import { FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
 
 import { useDispatch } from 'react-redux';
 
 import { closeDialogLogin, openDialogLogin} from '@/store/reducers/dialogs/LoginState';
 import account from '@/domain/account/Account';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import FormBase from '@/view/components/catalogs/form/FormBase';
 import TextFieldForm from '@/view/components/catalogs/form/fields/TextFielForm';
 import PasswordFieldForm from '@/view/components/catalogs/form/fields/PasswordFieldForm';
@@ -35,7 +26,7 @@ import ButtonForm from '@/view/components/catalogs/form/button/ButtonForm';
 import CustomAreaForm from '@/view/components/catalogs/form/custom/CustomAreaForm';
 import applicationSession from '@/domain/session/ApplicationSession';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme:any) => ({
   myDialogTitle: {
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.background.default,        

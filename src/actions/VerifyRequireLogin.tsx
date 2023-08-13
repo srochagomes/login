@@ -1,5 +1,5 @@
 import { HttpStatusCode } from 'axios';
-import { NextRouter, useRouter } from 'next/router';
+import { NextRouter } from 'next/router';
 
 const verifyRequiredLogin = (useRouter:NextRouter, payload:IAPIReturn) => {
     

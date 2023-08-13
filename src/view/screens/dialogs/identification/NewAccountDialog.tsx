@@ -4,13 +4,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Alert from '@mui/material/Alert';
 import DialogTitle from '@mui/material/DialogTitle';
-import { makeStyles } from '@material-ui/core';
+
 import Link from '@mui/material/Link';
 
-
+import {makeStyles } from '@mui/styles';
 
 import { HttpStatusCode } from 'axios';
-import { Box, Grid, Typography } from '@mui/material';
+import { Grid, Typography  } from '@mui/material';
 
 
 import { useDispatch } from 'react-redux';
@@ -24,7 +24,8 @@ import ButtonForm from '@/view/components/catalogs/form/button/ButtonForm';
 import CustomAreaForm from '@/view/components/catalogs/form/custom/CustomAreaForm';
 import applicationSession from '@/domain/session/ApplicationSession';
 
-const useStyles = makeStyles((theme) => ({
+
+const useStyles = makeStyles((theme:any) => ({
   myDialogTitle: {
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.background.default,        
@@ -65,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
     width: "50%"
   },
 }));
+
 
 
 

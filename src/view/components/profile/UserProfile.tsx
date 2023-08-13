@@ -1,5 +1,6 @@
-import { Typography } from "@material-ui/core";
+
 import { AccountCircle } from "@mui/icons-material";
+import { Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 
 

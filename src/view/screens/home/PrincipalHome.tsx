@@ -1,21 +1,20 @@
-
 import { useRouter } from 'next/router';
 
 import { Inter } from 'next/font/google'
-import Grid from '@mui/material/Grid'; // Grid version 2
-import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import applicationSession from '@/domain/session/ApplicationSession';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { verifyUserLogged } from '@/store/reducers/UserLoggedState';
 import { openDialogLogin, openDialogEmailAccountConfirmed } from '@/store/reducers/dialogs/LoginState';
 import loginSocialRedirect from '@/util/LoginSocialRedirect';
 import userSession from '@/domain/session/UserSession';
 import { HttpStatusCode } from 'axios';
-import { Container, Divider, Stack } from '@mui/material';
+
 const inter = Inter({ subsets: ['latin'] })
+
+
+
 
 
 export default function PrincipalHome() {
@@ -98,13 +97,6 @@ export default function PrincipalHome() {
     });
 
     
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-        ...theme.typography.body2,
-        padding: theme.spacing(1),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-      }));
 
   return (
     <>      
